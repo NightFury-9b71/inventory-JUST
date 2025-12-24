@@ -16,9 +16,25 @@ public class Office {
     @Schema(hidden = true)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
-    private String description;
+    
+    @Column(name = "name_bn")
+    private String nameBn;
+    
+    @Column(nullable = false)
+    private String type;
+    
+    @Column(unique = true)
     private String code;
+    
+    private String description;
+    
+    @Column(name = "display_order")
+    private Integer order;
+    
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
     
     @ManyToOne
     @JoinColumn(name = "parent_id")

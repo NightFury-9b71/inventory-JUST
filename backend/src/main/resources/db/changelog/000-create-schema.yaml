@@ -35,12 +35,33 @@ databaseChangeLog:
               - column:
                   name: name
                   type: VARCHAR(255)
+                  constraints:
+                    nullable: false
               - column:
-                  name: description
-                  type: VARCHAR(255)
+                  name: name_bn
+                  type: VARCHAR(500)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
               - column:
                   name: code
-                  type: VARCHAR(255)
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: display_order
+                  type: INT
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
               - column:
                   name: parent_id
                   type: BIGINT

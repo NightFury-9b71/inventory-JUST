@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-seed-offices
+      author: system
+      changes:
+        - loadData:
+            tableName: offices
+            file: db/changelog/office-seed-data.csv
+            encoding: UTF-8
