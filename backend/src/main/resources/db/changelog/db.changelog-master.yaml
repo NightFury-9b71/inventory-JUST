@@ -5,3 +5,9 @@ databaseChangeLog:
       file: db/changelog/001-seed-offices.yaml
   - include:
       file: db/changelog/002-seed-roles-and-users.yaml
+  - include:
+      file: db/changelog/003-seed-categories.yaml
+  - include:
+      file: db/changelog/004-seed-units.yaml
+  - include:
+      file: db/changelog/005-seed-items.yaml

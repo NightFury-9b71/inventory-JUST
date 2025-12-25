@@ -1,0 +1,201 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-seed-categories
+      author: system
+      changes:
+        # Electronics & IT Equipment
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Computer Hardware
+              - column:
+                  name: description
+                  value: Desktop computers, laptops, servers, and related hardware
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Network Equipment
+              - column:
+                  name: description
+                  value: Routers, switches, modems, access points, and networking cables
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Printers & Scanners
+              - column:
+                  name: description
+                  value: Printers, scanners, copiers, and related accessories
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Audio Visual Equipment
+              - column:
+                  name: description
+                  value: Projectors, cameras, microphones, speakers, and displays
+
+        # Furniture & Office Equipment
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Office Furniture
+              - column:
+                  name: description
+                  value: Desks, chairs, tables, cabinets, and shelving units
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Classroom Furniture
+              - column:
+                  name: description
+                  value: Student desks, benches, chairs, and podiums
+
+        # Laboratory Equipment
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Laboratory Equipment
+              - column:
+                  name: description
+                  value: Lab instruments, glassware, and scientific equipment
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Measurement Instruments
+              - column:
+                  name: description
+                  value: Multimeters, oscilloscopes, calibration tools, and sensors
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Safety Equipment
+              - column:
+                  name: description
+                  value: Fire extinguishers, first aid kits, safety gear, and PPE
+
+        # Office Supplies
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Stationery
+              - column:
+                  name: description
+                  value: Pens, pencils, notebooks, folders, and paper products
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Office Accessories
+              - column:
+                  name: description
+                  value: Staplers, punches, tape dispensers, and desk organizers
+
+        # Books & Educational Materials
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Books & References
+              - column:
+                  name: description
+                  value: Textbooks, reference books, journals, and publications
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Educational Software
+              - column:
+                  name: description
+                  value: Licensed software, learning management systems, and digital tools
+
+        # Maintenance & Tools
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Tools & Hardware
+              - column:
+                  name: description
+                  value: Hand tools, power tools, and maintenance equipment
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Cleaning Supplies
+              - column:
+                  name: description
+                  value: Cleaning agents, mops, brooms, and sanitation supplies
+
+        # Other Equipment
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Sports Equipment
+              - column:
+                  name: description
+                  value: Sports gear, fitness equipment, and recreational items
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Medical Equipment
+              - column:
+                  name: description
+                  value: Medical devices, health monitoring tools, and diagnostic equipment
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Electrical Supplies
+              - column:
+                  name: description
+                  value: Cables, switches, sockets, and electrical components
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: name
+                  value: Miscellaneous
+              - column:
+                  name: description
+                  value: Uncategorized items and general supplies

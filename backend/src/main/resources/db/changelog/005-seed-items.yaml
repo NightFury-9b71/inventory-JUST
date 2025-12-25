@@ -1,0 +1,778 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5-seed-items
+      author: system
+      changes:
+        # Computer Hardware Items (Category: Computer Hardware - assume ID 1)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Dell Desktop Computer
+              - column:
+                  name: description
+                  value: Dell OptiPlex 7090 with Intel i5, 8GB RAM, 256GB SSD
+              - column:
+                  name: price
+                  value: 65000.00
+              - column:
+                  name: category_id
+                  value: 1
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: HP Laptop
+              - column:
+                  name: description
+                  value: HP ProBook 450 G8, Intel i7, 16GB RAM, 512GB SSD
+              - column:
+                  name: price
+                  value: 85000.00
+              - column:
+                  name: category_id
+                  value: 1
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Dell Server
+              - column:
+                  name: description
+                  value: Dell PowerEdge R740 Server, Xeon processor
+              - column:
+                  name: price
+                  value: 350000.00
+              - column:
+                  name: category_id
+                  value: 1
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Network Equipment (Category: Network Equipment - assume ID 2)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Cisco Router
+              - column:
+                  name: description
+                  value: Cisco ISR 1100 Series Router
+              - column:
+                  name: price
+                  value: 45000.00
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: TP-Link Switch
+              - column:
+                  name: description
+                  value: 24-Port Gigabit Managed Switch
+              - column:
+                  name: price
+                  value: 18000.00
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: WiFi Access Point
+              - column:
+                  name: description
+                  value: Ubiquiti UniFi AP AC Pro
+              - column:
+                  name: price
+                  value: 8500.00
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Network Cable Cat6
+              - column:
+                  name: description
+                  value: Cat6 Ethernet cable, 305m roll
+              - column:
+                  name: price
+                  value: 12000.00
+              - column:
+                  name: category_id
+                  value: 2
+              - column:
+                  name: unit_id
+                  value: 20
+
+        # Printers & Scanners (Category ID 3)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: HP LaserJet Printer
+              - column:
+                  name: description
+                  value: HP LaserJet Pro MFP M428fdw
+              - column:
+                  name: price
+                  value: 42000.00
+              - column:
+                  name: category_id
+                  value: 3
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Canon Scanner
+              - column:
+                  name: description
+                  value: Canon imageFORMULA DR-C225 II
+              - column:
+                  name: price
+                  value: 28000.00
+              - column:
+                  name: category_id
+                  value: 3
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Audio Visual Equipment (Category ID 4)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Epson Projector
+              - column:
+                  name: description
+                  value: Epson EB-2250U WUXGA 3LCD Projector
+              - column:
+                  name: price
+                  value: 95000.00
+              - column:
+                  name: category_id
+                  value: 4
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: LED Display 55 inch
+              - column:
+                  name: description
+                  value: Samsung 55 inch 4K LED Display
+              - column:
+                  name: price
+                  value: 75000.00
+              - column:
+                  name: category_id
+                  value: 4
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Wireless Microphone
+              - column:
+                  name: description
+                  value: Shure BLX288/PG58 Dual Wireless System
+              - column:
+                  name: price
+                  value: 45000.00
+              - column:
+                  name: category_id
+                  value: 4
+              - column:
+                  name: unit_id
+                  value: 2
+
+        # Office Furniture (Category ID 5)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Office Desk
+              - column:
+                  name: description
+                  value: Executive wooden desk with drawers, 5ft x 3ft
+              - column:
+                  name: price
+                  value: 18000.00
+              - column:
+                  name: category_id
+                  value: 5
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Office Chair
+              - column:
+                  name: description
+                  value: Ergonomic office chair with armrests
+              - column:
+                  name: price
+                  value: 8500.00
+              - column:
+                  name: category_id
+                  value: 5
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Filing Cabinet
+              - column:
+                  name: description
+                  value: 4-drawer steel filing cabinet
+              - column:
+                  name: price
+                  value: 12000.00
+              - column:
+                  name: category_id
+                  value: 5
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Bookshelf
+              - column:
+                  name: description
+                  value: Wooden bookshelf, 6ft height, 5 shelves
+              - column:
+                  name: price
+                  value: 15000.00
+              - column:
+                  name: category_id
+                  value: 5
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Classroom Furniture (Category ID 6)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Student Desk
+              - column:
+                  name: description
+                  value: Single student desk with attached chair
+              - column:
+                  name: price
+                  value: 4500.00
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Classroom Bench
+              - column:
+                  name: description
+                  value: Wooden bench for 3 students
+              - column:
+                  name: price
+                  value: 6500.00
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Whiteboard
+              - column:
+                  name: description
+                  value: Magnetic whiteboard 6ft x 4ft with frame
+              - column:
+                  name: price
+                  value: 8500.00
+              - column:
+                  name: category_id
+                  value: 6
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Laboratory Equipment (Category ID 7)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Digital Microscope
+              - column:
+                  name: description
+                  value: 1000x magnification with LED illumination
+              - column:
+                  name: price
+                  value: 35000.00
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Laboratory Glassware Set
+              - column:
+                  name: description
+                  value: Complete set of beakers, flasks, test tubes
+              - column:
+                  name: price
+                  value: 12000.00
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: unit_id
+                  value: 2
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Laboratory Hot Plate
+              - column:
+                  name: description
+                  value: Digital hot plate with magnetic stirrer
+              - column:
+                  name: price
+                  value: 18000.00
+              - column:
+                  name: category_id
+                  value: 7
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Measurement Instruments (Category ID 8)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Digital Multimeter
+              - column:
+                  name: description
+                  value: Fluke 87V Digital Multimeter
+              - column:
+                  name: price
+                  value: 28000.00
+              - column:
+                  name: category_id
+                  value: 8
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Oscilloscope
+              - column:
+                  name: description
+                  value: Digital storage oscilloscope 100MHz
+              - column:
+                  name: price
+                  value: 85000.00
+              - column:
+                  name: category_id
+                  value: 8
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Safety Equipment (Category ID 9)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Fire Extinguisher
+              - column:
+                  name: description
+                  value: ABC type 5kg fire extinguisher
+              - column:
+                  name: price
+                  value: 2500.00
+              - column:
+                  name: category_id
+                  value: 9
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: First Aid Kit
+              - column:
+                  name: description
+                  value: Complete first aid kit for 50 people
+              - column:
+                  name: price
+                  value: 3500.00
+              - column:
+                  name: category_id
+                  value: 9
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Safety Goggles
+              - column:
+                  name: description
+                  value: Protective safety goggles for laboratory
+              - column:
+                  name: price
+                  value: 450.00
+              - column:
+                  name: category_id
+                  value: 9
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Stationery (Category ID 10)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: A4 Paper
+              - column:
+                  name: description
+                  value: White A4 copier paper 80gsm
+              - column:
+                  name: price
+                  value: 350.00
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: unit_id
+                  value: 18
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Ballpoint Pen
+              - column:
+                  name: description
+                  value: Blue ballpoint pen
+              - column:
+                  name: price
+                  value: 15.00
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Marker Pen Set
+              - column:
+                  name: description
+                  value: Whiteboard marker pens, 4 colors
+              - column:
+                  name: price
+                  value: 250.00
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: unit_id
+                  value: 2
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Notebook
+              - column:
+                  name: description
+                  value: Spiral notebook, 200 pages
+              - column:
+                  name: price
+                  value: 120.00
+              - column:
+                  name: category_id
+                  value: 10
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Office Accessories (Category ID 11)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Stapler
+              - column:
+                  name: description
+                  value: Heavy duty stapler, 50 sheet capacity
+              - column:
+                  name: price
+                  value: 850.00
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Paper Punch
+              - column:
+                  name: description
+                  value: 2-hole paper punch, 40 sheet capacity
+              - column:
+                  name: price
+                  value: 450.00
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Scissors
+              - column:
+                  name: description
+                  value: Office scissors, 8 inch
+              - column:
+                  name: price
+                  value: 180.00
+              - column:
+                  name: category_id
+                  value: 11
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Tools & Hardware (Category ID 14)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Screwdriver Set
+              - column:
+                  name: description
+                  value: 8-piece screwdriver set with case
+              - column:
+                  name: price
+                  value: 1200.00
+              - column:
+                  name: category_id
+                  value: 14
+              - column:
+                  name: unit_id
+                  value: 2
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Power Drill
+              - column:
+                  name: description
+                  value: Cordless power drill with battery
+              - column:
+                  name: price
+                  value: 8500.00
+              - column:
+                  name: category_id
+                  value: 14
+              - column:
+                  name: unit_id
+                  value: 1
+
+        # Cleaning Supplies (Category ID 15)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Floor Cleaner
+              - column:
+                  name: description
+                  value: Multipurpose floor cleaning liquid, 5L
+              - column:
+                  name: price
+                  value: 650.00
+              - column:
+                  name: category_id
+                  value: 15
+              - column:
+                  name: unit_id
+                  value: 21
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Mop and Bucket Set
+              - column:
+                  name: description
+                  value: Complete mopping set with wringer bucket
+              - column:
+                  name: price
+                  value: 1800.00
+              - column:
+                  name: category_id
+                  value: 15
+              - column:
+                  name: unit_id
+                  value: 2
+
+        # Electrical Supplies (Category ID 18)
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: Extension Cord
+              - column:
+                  name: description
+                  value: 6-outlet extension cord, 5m cable
+              - column:
+                  name: price
+                  value: 850.00
+              - column:
+                  name: category_id
+                  value: 18
+              - column:
+                  name: unit_id
+                  value: 1
+
+        - insert:
+            tableName: items
+            columns:
+              - column:
+                  name: name
+                  value: LED Bulb
+              - column:
+                  name: description
+                  value: 12W LED bulb, white light
+              - column:
+                  name: price
+                  value: 250.00
+              - column:
+                  name: category_id
+                  value: 18
+              - column:
+                  name: unit_id
+                  value: 1

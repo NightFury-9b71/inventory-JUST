@@ -1,0 +1,272 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4-seed-units
+      author: system
+      changes:
+        # Basic Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Piece
+              - column:
+                  name: description
+                  value: Individual items or units (pcs)
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Set
+              - column:
+                  name: description
+                  value: Collection of related items
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Dozen
+              - column:
+                  name: description
+                  value: 12 pieces
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Box
+              - column:
+                  name: description
+                  value: Items packaged in a box
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Pack
+              - column:
+                  name: description
+                  value: Pre-packaged group of items
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Carton
+              - column:
+                  name: description
+                  value: Large packaging unit
+
+        # Weight Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Kilogram
+              - column:
+                  name: description
+                  value: Weight measurement in kg
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Gram
+              - column:
+                  name: description
+                  value: Weight measurement in grams
+
+        # Volume Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Liter
+              - column:
+                  name: description
+                  value: Volume measurement in liters
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Milliliter
+              - column:
+                  name: description
+                  value: Volume measurement in ml
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Gallon
+              - column:
+                  name: description
+                  value: Volume measurement in gallons
+
+        # Length Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Meter
+              - column:
+                  name: description
+                  value: Length measurement in meters
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Centimeter
+              - column:
+                  name: description
+                  value: Length measurement in cm
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Foot
+              - column:
+                  name: description
+                  value: Length measurement in feet
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Inch
+              - column:
+                  name: description
+                  value: Length measurement in inches
+
+        # Area Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Square Meter
+              - column:
+                  name: description
+                  value: Area measurement in sq. meters
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Square Foot
+              - column:
+                  name: description
+                  value: Area measurement in sq. feet
+
+        # Stationery & Paper Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Ream
+              - column:
+                  name: description
+                  value: 500 sheets of paper
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Bundle
+              - column:
+                  name: description
+                  value: Group of items tied together
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Roll
+              - column:
+                  name: description
+                  value: Items wound in a cylindrical form
+
+        # Liquid/Chemical Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Bottle
+              - column:
+                  name: description
+                  value: Items in bottle containers
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Can
+              - column:
+                  name: description
+                  value: Items in can containers
+
+        # Other Units
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Pair
+              - column:
+                  name: description
+                  value: Two matching items
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Unit
+              - column:
+                  name: description
+                  value: Generic single unit of measurement
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Bag
+              - column:
+                  name: description
+                  value: Items in a bag
+
+        - insert:
+            tableName: units
+            columns:
+              - column:
+                  name: name
+                  value: Tube
+              - column:
+                  name: description
+                  value: Items in tube form

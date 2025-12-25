@@ -42,9 +42,7 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/api-docs/**",
                     "/h2-console/**",
-                    "/api/auth/**",
-                    "/api/tracking/**",
-                    "/api/offices"
+                    "/api/auth/**"
                 ).permitAll()
                 // Authenticated endpoints
                 .requestMatchers("/api/**").authenticated()
