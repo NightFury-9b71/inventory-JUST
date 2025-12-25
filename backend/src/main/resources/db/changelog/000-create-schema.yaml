@@ -327,6 +327,24 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: CONFIRMED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: confirmed_by_user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_transaction_confirmed_by
+                    references: users(id)
+              - column:
+                  name: confirmed_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
 
         # Create item_requests table
         - createTable:
@@ -412,6 +430,12 @@ databaseChangeLog:
               - column:
                   name: fulfilled_date
                   type: TIMESTAMP
+              - column:
+                  name: fulfilled_quantity
+                  type: DOUBLE
+                  defaultValue: 0
+                  constraints:
+                    nullable: true
 
         # Create purchases table
         - createTable:
@@ -466,3 +490,4 @@ databaseChangeLog:
                   type: TIMESTAMP
                   constraints:
                     nullable: false
+

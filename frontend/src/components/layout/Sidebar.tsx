@@ -152,27 +152,25 @@ export default function Sidebar() {
                   </h3>
                 )}
                 <div className="space-y-1">
-                  {/* {section.items.map((item, itemIndex) => (
-                    canAccessRoute(role as Role, item.href) ? (
-                      <Link
-                        key={itemIndex}
-                        href={item.href}
-                        onClick={() => {
-                          setSelectedItem(item.label);
-                          setIsOpen(false); // Close mobile sidebar on navigation
-                        }}
-                        className={`
-                          flex items-center w-full gap-3 px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors
-                          ${isCollapsed ? 'justify-center' : ''} 
-                          ${selectedItem === item.label ? 'bg-blue-50 text-blue-700 font-medium' : ''}
-                        `}
-                        title={isCollapsed ? item.label : ''}
-                      >
-                        <item.icon className={`h-5 w-5 flex-shrink-0 ${selectedItem === item.label ? 'text-blue-600' : ''}`} />
-                        {!isCollapsed && <span>{item.label}</span>}
-                      </Link>
-                    ) : null
-                  ))} */}
+                  {section.items.map((item, itemIndex) => (
+                    <Link
+                      key={itemIndex}
+                      href={item.href}
+                      onClick={() => {
+                        setSelectedItem(item.label);
+                        setIsOpen(false); // Close mobile sidebar on navigation
+                      }}
+                      className={`
+                        flex items-center w-full gap-3 px-3 py-2 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors
+                        ${isCollapsed ? 'justify-center' : ''} 
+                        ${selectedItem === item.label ? 'bg-blue-50 text-blue-700 font-medium' : ''}
+                      `}
+                      title={isCollapsed ? item.label : ''}
+                    >
+                      <item.icon className={`h-5 w-5 flex-shrink-0 ${selectedItem === item.label ? 'text-blue-600' : ''}`} />
+                      {!isCollapsed && <span>{item.label}</span>}
+                    </Link>
+                  ))}
                 </div>
               </div>
             ))}

@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface Purchase {
   id: number;
@@ -62,4 +63,38 @@ export const getPurchaseById = async (id: number): Promise<Purchase> => {
 export const getPurchasesByOffice = async (officeId: number): Promise<Purchase[]> => {
   const response = await api.get(`/purchases/office/${officeId}`);
   return response.data;
+};
+
+// React Query Hooks
+export const usePurchases = () => {
+  return useQuery({
+    queryKey: ['purchases'],
+    queryFn: getPurchases,
+  });
+};
+
+export const usePurchase = (id: number) => {
+  return useQuery({
+    queryKey: ['purchases', id],
+    queryFn: () => getPurchaseById(id),
+    enabled: !!id,
+  });
+};
+
+export const usePurchasesByOffice = (officeId: number) => {
+  return useQuery({
+    queryKey: ['purchases', 'office', officeId],
+    queryFn: () => getPurchasesByOffice(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useCreatePurchase = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createPurchase,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchases'] });
+    },
+  });
 };

@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const ROUTES_WITHOUT_LAYOUT = ["/login"];
+const ROUTES_WITHOUT_LAYOUT = ["/login", "/"];
 
 export default function RootLayout({
   children,

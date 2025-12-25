@@ -4,4 +4,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/001-seed-offices.yaml
   - include:
-      file: db/changelog/002-add-transaction-status.yaml
+      file: db/changelog/002-seed-roles-and-users.yaml

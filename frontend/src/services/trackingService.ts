@@ -1,5 +1,6 @@
 import api from "@/lib/api";
 import { ItemInstance } from "./inventoryService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface BarcodeSearchResult {
   itemInstance: ItemInstance;
@@ -29,4 +30,19 @@ export const trackByBarcode = async (barcode: string): Promise<BarcodeSearchResu
 export const bulkBarcodeSearch = async (barcodes: string[]): Promise<BarcodeSearchResult[]> => {
   const response = await api.post("/tracking/barcodes", { barcodes });
   return response.data;
+};
+
+// React Query Hooks
+export const useTrackByBarcode = (barcode: string) => {
+  return useQuery({
+    queryKey: ['tracking', 'barcode', barcode],
+    queryFn: () => trackByBarcode(barcode),
+    enabled: !!barcode,
+  });
+};
+
+export const useBulkBarcodeSearch = () => {
+  return useMutation({
+    mutationFn: bulkBarcodeSearch,
+  });
 };

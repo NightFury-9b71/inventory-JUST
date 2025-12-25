@@ -100,7 +100,7 @@ export function ActionButton({
                 await service.delete(id);
             }
         } catch (error) {
-            console.error(`Error ${type}ing item:`, error);
+            // Error handling
         } finally {
             setLoading(false);
         }

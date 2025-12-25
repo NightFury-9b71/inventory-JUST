@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface ItemInstance {
   id: number;
@@ -85,4 +86,51 @@ export const getMyOfficeInventory = async (): Promise<ItemInstance[]> => {
 export const getMyOfficeInventorySummary = async (): Promise<InventorySummary> => {
   const response = await api.get(`/inventories/my-office/summary`);
   return response.data;
+};
+
+// React Query Hooks
+export const useInventoryByOffice = (officeId: number) => {
+  return useQuery({
+    queryKey: ['inventory', 'office', officeId],
+    queryFn: () => getInventoryByOffice(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useItemInstancesByOffice = (officeId: number) => {
+  return useQuery({
+    queryKey: ['inventory', 'office', officeId, 'items'],
+    queryFn: () => getItemInstancesByOffice(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useInventorySummary = (officeId: number) => {
+  return useQuery({
+    queryKey: ['inventory', 'office', officeId, 'summary'],
+    queryFn: () => getInventorySummary(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useItemInstance = (id: number) => {
+  return useQuery({
+    queryKey: ['inventory', 'items', id],
+    queryFn: () => getItemInstanceById(id),
+    enabled: !!id,
+  });
+};
+
+export const useMyOfficeInventory = () => {
+  return useQuery({
+    queryKey: ['inventory', 'my-office'],
+    queryFn: getMyOfficeInventory,
+  });
+};
+
+export const useMyOfficeInventorySummary = () => {
+  return useQuery({
+    queryKey: ['inventory', 'my-office', 'summary'],
+    queryFn: getMyOfficeInventorySummary,
+  });
 };

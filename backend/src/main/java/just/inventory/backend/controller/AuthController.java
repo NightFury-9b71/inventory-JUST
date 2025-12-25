@@ -56,11 +56,26 @@ public class AuthController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails);
+        
+        // Get the full user entity
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
         Map<String, Object> response = new HashMap<>();
         response.put("token", jwt);
-        response.put("username", userDetails.getUsername());
-        response.put("authorities", userDetails.getAuthorities());
+        
+        // Create user object with all necessary fields
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", user.getId().toString());
+        userInfo.put("username", user.getUsername());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("name", user.getFullName());
+        userInfo.put("role", user.getRole().getName());
+        userInfo.put("permissions", userDetails.getAuthorities());
+        userInfo.put("officeId", user.getOffice().getId().toString());
+        userInfo.put("officeName", user.getOffice().getName());
+        
+        response.put("user", userInfo);
 
         return ResponseEntity.ok(response);
     }

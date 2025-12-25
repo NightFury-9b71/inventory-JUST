@@ -1,0 +1,148 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-seed-roles
+      author: system
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: ADMIN
+              - column:
+                  name: description
+                  value: Administrator with full access
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: USER
+              - column:
+                  name: description
+                  value: Regular user with limited access
+
+  - changeSet:
+      id: 3-seed-inventories
+      author: system
+      changes:
+        - insert:
+            tableName: inventories
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: office_id
+                  value: 5
+        - insert:
+            tableName: inventories
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: office_id
+                  value: 14
+
+  - changeSet:
+      id: 4-seed-users
+      author: system
+      changes:
+        # FET Admin
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: full_name
+                  value: Dr. Rafiqul Islam
+              - column:
+                  name: username
+                  value: admin.fet
+              - column:
+                  name: password
+                  value: $2a$10$hTtpS2P0OwNYkFqyLxVkDucNZ9SU7XhDiIUrevkJ6pa3awzf0P/Di
+              - column:
+                  name: email
+                  value: admin.fet@university.edu
+              - column:
+                  name: role_id
+                  value: 1
+              - column:
+                  name: office_id
+                  value: 5
+
+        # FET User
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: full_name
+                  value: Nazmus Sakib Khan
+              - column:
+                  name: username
+                  value: user.fet
+              - column:
+                  name: password
+                  value: $2a$10$hTtpS2P0OwNYkFqyLxVkDucNZ9SU7XhDiIUrevkJ6pa3awzf0P/Di
+              - column:
+                  name: email
+                  value: user.fet@university.edu
+              - column:
+                  name: role_id
+                  value: 2
+              - column:
+                  name: office_id
+                  value: 5
+
+        # CSE Admin
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: full_name
+                  value: Prof. Tahmina Akter
+              - column:
+                  name: username
+                  value: admin.cse
+              - column:
+                  name: password
+                  value: $2a$10$hTtpS2P0OwNYkFqyLxVkDucNZ9SU7XhDiIUrevkJ6pa3awzf0P/Di
+              - column:
+                  name: email
+                  value: admin.cse@university.edu
+              - column:
+                  name: role_id
+                  value: 1
+              - column:
+                  name: office_id
+                  value: 14
+
+        # CSE User
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: full_name
+                  value: Md. Ariful Hoque
+              - column:
+                  name: username
+                  value: user.cse
+              - column:
+                  name: password
+                  value: $2a$10$hTtpS2P0OwNYkFqyLxVkDucNZ9SU7XhDiIUrevkJ6pa3awzf0P/Di
+              - column:
+                  name: email
+                  value: user.cse@university.edu
+              - column:
+                  name: role_id
+                  value: 2
+              - column:
+                  name: office_id
+                  value: 14

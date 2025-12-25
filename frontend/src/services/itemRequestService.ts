@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface ItemRequest {
   id: number;
@@ -116,4 +117,85 @@ export const getIncomingRequests = async (): Promise<ItemRequest[]> => {
 export const getMyRequests = async (): Promise<ItemRequest[]> => {
   const response = await api.get("/item-requests/my-requests");
   return response.data;
+};
+
+// React Query Hooks
+export const useItemRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests'],
+    queryFn: getItemRequests,
+  });
+};
+
+export const useItemRequest = (id: number) => {
+  return useQuery({
+    queryKey: ['itemRequests', id],
+    queryFn: () => getItemRequestById(id),
+    enabled: !!id,
+  });
+};
+
+export const useRequestsByOffice = (officeId: number) => {
+  return useQuery({
+    queryKey: ['itemRequests', 'office', officeId],
+    queryFn: () => getRequestsByOffice(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useIncomingRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests', 'incoming'],
+    queryFn: getIncomingRequests,
+  });
+};
+
+export const useMyRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests', 'my-requests'],
+    queryFn: getMyRequests,
+  });
+};
+
+export const useCreateItemRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createItemRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
+    },
+  });
+};
+
+export const useApproveRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, approval }: { id: number; approval: ApprovalRequest }) =>
+      approveRequest(id, approval),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
+    },
+  });
+};
+
+export const useFulfillRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, fulfillment }: { id: number; fulfillment: FulfillmentRequest }) =>
+      fulfillRequest(id, fulfillment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
+    },
+  });
+};
+
+export const useRejectRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, rejection }: { id: number; rejection: RejectionRequest }) =>
+      rejectRequest(id, rejection),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
+    },
+  });
 };

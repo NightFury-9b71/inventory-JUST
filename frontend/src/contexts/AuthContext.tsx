@@ -34,7 +34,6 @@ const getUserFromStorage = (): User | null => {
     }
     return parsed;
   } catch (error) {
-    console.error("Failed to parse stored user:", error);
     localStorage.removeItem(KEY.user_info);
     return null;
   }
@@ -47,9 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const user = getUserFromStorage();
     if (user) {
       setUser(user);
-      if (process.env.NODE_ENV === 'development') {
-        console.debug('[AuthProvider] Loaded user from storage:', user);
-      }
     }
   }, []);
 
@@ -61,9 +57,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshUser = useCallback(() => {
     const user = getUserFromStorage();
     setUser(user);
-    if (process.env.NODE_ENV === 'development') {
-      console.debug('[AuthProvider] Refreshed user:', user);
-    }
   }, []);
 
   const role = user?.role || "guest";

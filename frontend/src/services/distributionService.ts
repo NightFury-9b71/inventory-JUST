@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface ItemTransaction {
   id: number;
@@ -80,4 +81,69 @@ export const confirmTransaction = async (transactionId: number): Promise<ItemTra
 export const rejectTransaction = async (transactionId: number, reason?: string): Promise<ItemTransaction> => {
   const response = await api.post(`/distributions/${transactionId}/reject`, { reason });
   return response.data;
+};
+
+// React Query Hooks
+export const useOfficeTransactionHistory = (officeId: number) => {
+  return useQuery({
+    queryKey: ['distributions', 'office', officeId, 'history'],
+    queryFn: () => getOfficeTransactionHistory(officeId),
+    enabled: !!officeId,
+  });
+};
+
+export const useItemTransactionHistory = (itemInstanceId: number) => {
+  return useQuery({
+    queryKey: ['distributions', 'item', itemInstanceId, 'history'],
+    queryFn: () => getItemTransactionHistory(itemInstanceId),
+    enabled: !!itemInstanceId,
+  });
+};
+
+export const useMyOfficeTransactionHistory = () => {
+  return useQuery({
+    queryKey: ['distributions', 'my-office', 'history'],
+    queryFn: getMyOfficeTransactionHistory,
+  });
+};
+
+export const usePendingDistributions = () => {
+  return useQuery({
+    queryKey: ['distributions', 'pending'],
+    queryFn: getPendingDistributions,
+  });
+};
+
+export const useCreateDistribution = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createDistribution,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['distributions'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
+  });
+};
+
+export const useConfirmTransaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: confirmTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['distributions'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
+  });
+};
+
+export const useRejectTransaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ transactionId, reason }: { transactionId: number; reason?: string }) =>
+      rejectTransaction(transactionId, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['distributions'] });
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
+  });
 };
