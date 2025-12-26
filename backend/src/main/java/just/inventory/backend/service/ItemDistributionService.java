@@ -25,15 +25,21 @@ public class ItemDistributionService {
     @Transactional
     public List<ItemTransaction> distributeItems(Long fromOfficeId, Long toOfficeId, Long itemId, 
                                                    int quantity, User distributedBy, String remarks) {
+        return distributeItems(fromOfficeId, toOfficeId, itemId, quantity, distributedBy, remarks, null);
+    }
+
+    @Transactional
+    public List<ItemTransaction> distributeItems(Long fromOfficeId, Long toOfficeId, Long itemId, 
+                                                   int quantity, User distributedBy, String remarks, ItemRequest itemRequest) {
         // Validate offices
         Office fromOffice = officeRepository.findById(fromOfficeId)
                 .orElseThrow(() -> new RuntimeException("Source office not found"));
         Office toOffice = officeRepository.findById(toOfficeId)
                 .orElseThrow(() -> new RuntimeException("Destination office not found"));
         
-        // Check if toOffice is a child of fromOffice
-        if (toOffice.getParent() == null || !toOffice.getParent().getId().equals(fromOfficeId)) {
-            throw new RuntimeException("Can only distribute to direct child offices");
+        // Validate that source and destination are different offices
+        if (fromOfficeId.equals(toOfficeId)) {
+            throw new RuntimeException("Cannot distribute items to the same office");
         }
         
         // Get available items from source office inventory
@@ -78,6 +84,7 @@ public class ItemDistributionService {
             transaction.setStatus(ItemTransaction.TransactionStatus.PENDING);
             transaction.setQuantity(1.0);
             transaction.setRemarks(remarks);
+            transaction.setItemRequest(itemRequest);
             
             transactions.add(itemTransactionRepository.save(transaction));
         }
@@ -152,5 +159,19 @@ public class ItemDistributionService {
 
     public List<ItemTransaction> getItemTransactionHistory(Long itemInstanceId) {
         return itemTransactionRepository.findByItemInstanceId(itemInstanceId);
+    }
+
+    @Transactional
+    public List<ItemTransaction> confirmDistributionsForRequest(Long itemRequestId, User confirmedBy) {
+        List<ItemTransaction> transactions = itemTransactionRepository.findByItemRequestId(itemRequestId);
+        List<ItemTransaction> confirmed = new ArrayList<>();
+        
+        for (ItemTransaction transaction : transactions) {
+            if (transaction.getStatus() == ItemTransaction.TransactionStatus.PENDING) {
+                confirmed.add(confirmDistribution(transaction.getId(), confirmedBy));
+            }
+        }
+        
+        return confirmed;
     }
 }

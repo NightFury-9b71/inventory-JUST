@@ -23,4 +23,6 @@ public interface ItemTransactionRepository extends JpaRepository<ItemTransaction
     List<ItemTransaction> findByToOfficeIdAndStatus(Long toOfficeId, ItemTransaction.TransactionStatus status);
     
     List<ItemTransaction> findByFromOfficeIdAndStatus(Long fromOfficeId, ItemTransaction.TransactionStatus status);
+    
+    List<ItemTransaction> findByItemRequestId(Long itemRequestId);
 }

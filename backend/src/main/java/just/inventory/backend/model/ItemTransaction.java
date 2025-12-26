@@ -30,6 +30,10 @@ public class ItemTransaction {
     private Office toOffice;
 
     @ManyToOne
+    @JoinColumn(name = "item_request_id")
+    private ItemRequest itemRequest;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

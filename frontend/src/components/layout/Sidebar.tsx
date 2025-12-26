@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Ruler,
   User,
-  Warehouse
+  Warehouse,
+  FileCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // import { SidebarItems } from '@/types/constant';
@@ -62,6 +63,7 @@ export default function Sidebar() {
       items: [
         { icon: ShoppingCart, label: 'Purchases', href: '/purchases' },
         { icon: Send, label: 'Transfers', href: '/distributions' },
+        { icon: FileCheck, label: 'Requisitions', href: '/requisitions' },
       ]
     },
     {

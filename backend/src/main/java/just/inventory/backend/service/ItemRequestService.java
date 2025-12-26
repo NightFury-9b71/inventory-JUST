@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,7 +129,8 @@ public class ItemRequestService {
             request.getItem().getId(),
             quantity,
             fulfiller,
-            "Fulfilling request #" + requestId + " (" + quantity + " of " + request.getApprovedQuantity() + "): " + request.getReason()
+            "Fulfilling request #" + requestId + " (" + quantity + " of " + request.getApprovedQuantity() + "): " + request.getReason(),
+            request
         );
         
         // Update fulfilled quantity
@@ -167,5 +169,63 @@ public class ItemRequestService {
 
     public List<ItemRequest> getApprovedRequestsForOffice(Long officeId) {
         return itemRequestRepository.findByParentOfficeIdAndStatus(officeId, ItemRequest.RequestStatus.APPROVED);
+    }
+
+    public List<ItemRequest> getFulfilledRequestsForOffice(Long officeId) {
+        return itemRequestRepository.findByRequestingOfficeId(officeId).stream()
+                .filter(request -> request.getStatus() == ItemRequest.RequestStatus.FULFILLED ||
+                                   request.getStatus() == ItemRequest.RequestStatus.PARTIALLY_FULFILLED)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ItemRequest confirmReceipt(Long requestId, Long confirmedByUserId, String remarks) {
+        ItemRequest request = getItemRequestById(requestId);
+        
+        // Check if request can be confirmed
+        if (request.getStatus() != ItemRequest.RequestStatus.FULFILLED) {
+            throw new RuntimeException("Only fully fulfilled requests can be confirmed");
+        }
+        
+        User confirmer = userRepository.findById(confirmedByUserId)
+                .orElseThrow(() -> new RuntimeException("Confirmer not found"));
+        
+        // Confirm all pending transactions associated with this request
+        List<ItemTransaction> confirmedTransactions = itemDistributionService.confirmDistributionsForRequest(
+            requestId, confirmer);
+        
+        if (confirmedTransactions.isEmpty()) {
+            throw new RuntimeException("No pending transactions found for this request");
+        }
+        
+        // Update request with confirmation details
+        request.setStatus(ItemRequest.RequestStatus.CONFIRMED);
+        request.setConfirmedBy(confirmer);
+        request.setConfirmedDate(LocalDateTime.now());
+        request.setConfirmationRemarks(remarks);
+        
+        return itemRequestRepository.save(request);
+    }
+
+    public List<ItemRequest> getHistoryForOffice(Long officeId) {
+        // Get all requests where office is either requesting or parent office
+        List<ItemRequest> requestingHistory = itemRequestRepository.findByRequestingOfficeId(officeId);
+        List<ItemRequest> parentHistory = itemRequestRepository.findByParentOfficeId(officeId);
+        
+        // Combine both lists and remove duplicates (shouldn't happen, but just in case)
+        List<ItemRequest> allHistory = new ArrayList<>();
+        allHistory.addAll(requestingHistory);
+        
+        // Add parent office requests that aren't already in the list
+        for (ItemRequest request : parentHistory) {
+            if (!requestingHistory.contains(request)) {
+                allHistory.add(request);
+            }
+        }
+        
+        // Sort by requested date, most recent first
+        allHistory.sort((r1, r2) -> r2.getRequestedDate().compareTo(r1.getRequestedDate()));
+        
+        return allHistory;
     }
 }

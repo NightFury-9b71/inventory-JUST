@@ -31,7 +31,7 @@ public class ItemDistributionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can distribute items");
         }
@@ -68,7 +68,7 @@ public class ItemDistributionController {
         
         // Check if user belongs to the office or is admin
         if (!currentUser.getOffice().getId().equals(officeId) && 
-            !"Admin".equals(currentUser.getRole().getName())) {
+            !"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("You can only view transaction history for your own office");
         }
@@ -113,7 +113,7 @@ public class ItemDistributionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can confirm distributions");
         }
@@ -136,7 +136,7 @@ public class ItemDistributionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can reject distributions");
         }

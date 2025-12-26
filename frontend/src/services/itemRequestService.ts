@@ -3,12 +3,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface ItemRequest {
   id: number;
-  requestDate: string;
+  requestedDate: string;
   requestedQuantity: number;
   approvedQuantity?: number;
   fulfilledQuantity?: number;
   status: string;
-  priority?: string;
+  reason?: string;
+  remarks?: string;
+  confirmationRemarks?: string;
+  approvedDate?: string;
+  rejectedDate?: string;
+  fulfilledDate?: string;
+  confirmedDate?: string;
   requestingOffice: {
     id: number;
     name: string;
@@ -33,36 +39,38 @@ export interface ItemRequest {
     username: string;
     name?: string;
   };
-  fulfilledBy?: {
+  confirmedBy?: {
     id: number;
     username: string;
     name?: string;
   };
-  remarks?: string;
-  approvalRemarks?: string;
-  rejectionReason?: string;
 }
 
 export interface ItemRequestForm {
-  itemId: number;
+  item: {
+    id: number;
+  };
   requestedQuantity: number;
-  parentOfficeId: number;
-  priority?: string;
-  remarks?: string;
+  parentOffice: {
+    id: number;
+  };
+  reason?: string;
 }
 
 export interface ApprovalRequest {
   approvedQuantity: number;
-  approvalRemarks?: string;
 }
 
 export interface FulfillmentRequest {
-  fulfilledQuantity: number;
-  itemInstanceIds: number[];
+  quantity: number;
 }
 
 export interface RejectionRequest {
-  rejectionReason: string;
+  remarks: string;
+}
+
+export interface ConfirmationRequest {
+  remarks?: string;
 }
 
 // Create a new item request
@@ -107,6 +115,12 @@ export const rejectRequest = async (id: number, rejection: RejectionRequest): Pr
   return response.data;
 };
 
+// Confirm receipt of fulfilled request
+export const confirmReceipt = async (id: number, confirmation: ConfirmationRequest): Promise<ItemRequest> => {
+  const response = await api.put(`/item-requests/${id}/confirm`, confirmation);
+  return response.data;
+};
+
 // Get incoming requests (requests TO current user's office)
 export const getIncomingRequests = async (): Promise<ItemRequest[]> => {
   const response = await api.get("/item-requests/incoming");
@@ -116,6 +130,24 @@ export const getIncomingRequests = async (): Promise<ItemRequest[]> => {
 // Get my requests (requests FROM current user's office)
 export const getMyRequests = async (): Promise<ItemRequest[]> => {
   const response = await api.get("/item-requests/my-requests");
+  return response.data;
+};
+
+// Get approved requests (approved but not yet fulfilled)
+export const getApprovedRequests = async (): Promise<ItemRequest[]> => {
+  const response = await api.get("/item-requests/approved");
+  return response.data;
+};
+
+// Get fulfilled requests (fulfilled or partially fulfilled)
+export const getFulfilledRequests = async (): Promise<ItemRequest[]> => {
+  const response = await api.get("/item-requests/fulfilled");
+  return response.data;
+};
+
+// Get history (all requests for current office)
+export const getHistoryRequests = async (): Promise<ItemRequest[]> => {
+  const response = await api.get("/item-requests/history");
   return response.data;
 };
 
@@ -157,6 +189,27 @@ export const useMyRequests = () => {
   });
 };
 
+export const useApprovedRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests', 'approved'],
+    queryFn: getApprovedRequests,
+  });
+};
+
+export const useFulfilledRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests', 'fulfilled'],
+    queryFn: getFulfilledRequests,
+  });
+};
+
+export const useHistoryRequests = () => {
+  return useQuery({
+    queryKey: ['itemRequests', 'history'],
+    queryFn: getHistoryRequests,
+  });
+};
+
 export const useCreateItemRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -194,6 +247,17 @@ export const useRejectRequest = () => {
   return useMutation({
     mutationFn: ({ id, rejection }: { id: number; rejection: RejectionRequest }) =>
       rejectRequest(id, rejection),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
+    },
+  });
+};
+
+export const useConfirmReceipt = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, confirmation }: { id: number; confirmation: ConfirmationRequest }) =>
+      confirmReceipt(id, confirmation),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['itemRequests'] });
     },

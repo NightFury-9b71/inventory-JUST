@@ -31,7 +31,7 @@ public class ItemRequestController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can create item requests");
         }
@@ -100,7 +100,7 @@ public class ItemRequestController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can approve requests");
         }
@@ -128,7 +128,7 @@ public class ItemRequestController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can fulfill requests");
         }
@@ -161,7 +161,7 @@ public class ItemRequestController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can reject requests");
         }
@@ -203,6 +203,75 @@ public class ItemRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    @GetMapping("/approved")
+    public ResponseEntity<?> getApprovedRequests() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        List<ItemRequest> requests = itemRequestService.getApprovedRequestsForOffice(
+            currentUser.getOffice().getId());
+        return ResponseEntity.ok(requests);
+    }
+
+    @GetMapping("/fulfilled")
+    public ResponseEntity<?> getFulfilledRequests() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        List<ItemRequest> requests = itemRequestService.getFulfilledRequestsForOffice(
+            currentUser.getOffice().getId());
+        return ResponseEntity.ok(requests);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<?> getHistory() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        List<ItemRequest> requests = itemRequestService.getHistoryForOffice(
+            currentUser.getOffice().getId());
+        return ResponseEntity.ok(requests);
+    }
+
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<?> confirmReceipt(
+            @PathVariable Long id,
+            @RequestBody ConfirmationRequest confirmationRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Check if user is admin
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Only admins can confirm receipt");
+        }
+        
+        ItemRequest request = itemRequestService.getItemRequestById(id);
+        
+        // Check if user belongs to the requesting office (receiver)
+        if (!currentUser.getOffice().getId().equals(request.getRequestingOffice().getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You can only confirm receipt for your office");
+        }
+        
+        try {
+            ItemRequest confirmed = itemRequestService.confirmReceipt(
+                id, currentUser.getId(), confirmationRequest.getRemarks());
+            return ResponseEntity.ok(confirmed);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+        }
+    }
+
     // DTOs
     public static class ApprovalRequest {
         private Double approvedQuantity;
@@ -229,6 +298,18 @@ public class ItemRequestController {
     }
 
     public static class RejectionRequest {
+        private String remarks;
+
+        public String getRemarks() {
+            return remarks;
+        }
+
+        public void setRemarks(String remarks) {
+            this.remarks = remarks;
+        }
+    }
+
+    public static class ConfirmationRequest {
         private String remarks;
 
         public String getRemarks() {

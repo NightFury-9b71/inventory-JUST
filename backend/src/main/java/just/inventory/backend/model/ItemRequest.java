@@ -41,6 +41,10 @@ public class ItemRequest {
     @JoinColumn(name = "approved_by_user_id")
     private User approvedBy;
 
+    @ManyToOne
+    @JoinColumn(name = "confirmed_by_user_id")
+    private User confirmedBy;
+
     @Column(nullable = false)
     private Double requestedQuantity;
 
@@ -56,6 +60,8 @@ public class ItemRequest {
 
     private String remarks;
 
+    private String confirmationRemarks;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime requestedDate;
 
@@ -64,6 +70,8 @@ public class ItemRequest {
     private LocalDateTime rejectedDate;
 
     private LocalDateTime fulfilledDate;
+
+    private LocalDateTime confirmedDate;
 
     @PrePersist
     protected void onCreate() {
@@ -79,6 +87,7 @@ public class ItemRequest {
         REJECTED,          // Request rejected
         PARTIALLY_FULFILLED, // Some items sent, can send more
         FULFILLED,         // All approved items transferred
+        CONFIRMED,         // Receiver confirmed receipt of fulfilled items
         CANCELLED          // Request cancelled by requester
     }
 }

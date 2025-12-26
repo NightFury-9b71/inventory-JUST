@@ -36,7 +36,7 @@ public class PurchaseController {
         }
         
         // Check if user is admin
-        if (!"Admin".equals(currentUser.getRole().getName())) {
+        if (!"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Only admins can create purchases");
         }

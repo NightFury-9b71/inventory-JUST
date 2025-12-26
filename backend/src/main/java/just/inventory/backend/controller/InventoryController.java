@@ -33,7 +33,7 @@ public class InventoryController {
         
         // Check if user belongs to the same office or is admin
         if (!currentUser.getOffice().getId().equals(officeId) && 
-            !"Admin".equals(currentUser.getRole().getName())) {
+            !"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(403)
                 .body("You can only view inventory for your own office");
         }
@@ -51,7 +51,7 @@ public class InventoryController {
         
         // Check if user belongs to the same office or is admin
         if (!currentUser.getOffice().getId().equals(officeId) && 
-            !"Admin".equals(currentUser.getRole().getName())) {
+            !"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(403)
                 .body("You can only view inventory for your own office");
         }
@@ -69,7 +69,7 @@ public class InventoryController {
         
         // Check if user belongs to the same office or is admin
         if (!currentUser.getOffice().getId().equals(officeId) && 
-            !"Admin".equals(currentUser.getRole().getName())) {
+            !"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(403)
                 .body("You can only view inventory for your own office");
         }
@@ -89,7 +89,7 @@ public class InventoryController {
         
         // Check if user belongs to the same office or is admin
         if (!currentUser.getOffice().getId().equals(instance.getOwnerOffice().getId()) && 
-            !"Admin".equals(currentUser.getRole().getName())) {
+            !"ADMIN".equals(currentUser.getRole().getName())) {
             return ResponseEntity.status(403)
                 .body("You can only view items for your own office");
         }

@@ -3,11 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface Purchase {
   id: number;
-  purchaseDate: string;
+  purchasedDate: string;
   supplier: string;
-  invoiceNumber?: string;
-  totalAmount?: number;
   remarks?: string;
+  quantity: number;
+  unitPrice: number;
+  item: {
+    id: number;
+    name: string;
+  };
   office: {
     id: number;
     name: string;
@@ -17,28 +21,16 @@ export interface Purchase {
     username: string;
     name?: string;
   };
-  items: Array<{
-    item: {
-      id: number;
-      name: string;
-    };
-    quantity: number;
-    unitPrice: number;
-    totalPrice: number;
-  }>;
 }
 
 export interface PurchaseForm {
-  purchaseDate: string;
+  item: {
+    id: number;
+  };
+  quantity: number;
+  unitPrice: number;
   supplier: string;
-  invoiceNumber?: string;
-  totalAmount?: number;
   remarks?: string;
-  items: Array<{
-    itemId: number;
-    quantity: number;
-    unitPrice: number;
-  }>;
 }
 
 // Create a new purchase
