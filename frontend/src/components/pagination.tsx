@@ -48,6 +48,11 @@ export function PaginationGroup<T = any>({
     onPaginatedData(paginatedData);
   }, [currentPage, data, itemsPerPage, onPaginatedData]);
 
+  // Calculate showing range
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, data.length);
+  const totalItems = data.length;
+
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -93,12 +98,24 @@ export function PaginationGroup<T = any>({
     return pages;
   };
 
+  // Show data count even when there's no pagination needed
   if (totalPages <= 1) {
-    return null;
+    if (totalItems === 0) {
+      return null;
+    }
+    return (
+      <div className="text-sm text-muted-foreground">
+        Total: {totalItems}
+      </div>
+    );
   }
 
   return (
-    <Pagination>
+    <div className="flex items-center justify-between">
+      <div className="text-sm text-muted-foreground">
+        Total:{totalItems}
+      </div>
+      <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
@@ -150,5 +167,6 @@ export function PaginationGroup<T = any>({
         </PaginationItem>
       </PaginationContent>
     </Pagination>
+    </div>
   );
 }

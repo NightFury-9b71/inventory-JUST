@@ -381,7 +381,7 @@ export default function RequisitionsPage() {
         open={showConfirmDialog}
         onOpenChange={setShowConfirmDialog}
         request={selectedRequest}
-        remarks={confirmationData.remarks}
+        remarks={confirmationData.remarks || ""}
         setRemarks={(remarks) => setConfirmationData({ remarks })}
         onConfirm={handleConfirm}
         isConfirming={isConfirming}

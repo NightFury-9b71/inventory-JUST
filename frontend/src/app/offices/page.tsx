@@ -26,6 +26,7 @@ import { useTableActions } from "@/hooks/useTableActions";
 import { useChildOffices } from "@/services/officeService";
 import { Office } from "@/services/officeService";
 import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
 
 const searchConfig = {
   placeholder: "Search offices...",
@@ -86,10 +87,8 @@ function Body({ data }: { data: Office[] }){
     <>
     <div className="mx-auto my-8 max-w-7xl">
       <Table>
-        <TableCaption>A list of offices.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Bengali Name</TableHead>
             <TableHead>Type</TableHead>
@@ -101,7 +100,6 @@ function Body({ data }: { data: Office[] }){
         <TableBody>
           {data.map((item) => (
           <TableRow key={item.id}>
-            <TableCell>{item.id}</TableCell>
             <TableCell>{item.name}</TableCell>
             <TableCell>{item.nameBn || '-'}</TableCell>
             <TableCell className="capitalize">{item.type}</TableCell>

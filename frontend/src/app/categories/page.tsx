@@ -25,6 +25,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { useTableActions } from "@/hooks/useTableActions";
 import { useCategories, Category } from "@/services/categoryService";
 import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
 
 const searchConfig = {
   placeholder: "Search categories...",
@@ -63,10 +64,8 @@ function Body({ data }: { data: Category[] }){
     <>
     <div className="mx-auto my-8 max-w-7xl">
       <Table>
-        <TableCaption>A list of inventory categories.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Actions</TableHead>
@@ -75,7 +74,6 @@ function Body({ data }: { data: Category[] }){
         <TableBody>
           {data.map((item) => (
           <TableRow key={item.id}>
-            <TableCell>{item.id}</TableCell>
             <TableCell className="font-medium">{item.name}</TableCell>
             <TableCell>{item.description || '-'}</TableCell>
             <TableCell>

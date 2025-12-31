@@ -140,9 +140,9 @@ export function CreateRequestDialog({
                 <Input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={quantity || ''}
-                  onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
                   placeholder="Quantity"
                 />
               </div>
@@ -177,10 +177,10 @@ export function CreateRequestDialog({
                         <Input
                           type="number"
                           min="0"
-                          step="0.01"
+                          step="1"
                           value={item.quantity}
                           onChange={(e) => 
-                            onUpdateQuantity(index, parseFloat(e.target.value) || 0)
+                            onUpdateQuantity(index, parseInt(e.target.value) || 0)
                           }
                           className="w-32"
                         />

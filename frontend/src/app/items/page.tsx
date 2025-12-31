@@ -63,10 +63,8 @@ function Body({ data }: { data: Item[] }){
     <>
     <div className="mx-auto my-8 max-w-7xl">
       <Table>
-        <TableCaption>A list of inventory items.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Unit</TableHead>
@@ -77,7 +75,6 @@ function Body({ data }: { data: Item[] }){
         <TableBody>
           {data.map((item) => (
           <TableRow key={item.id}>
-            <TableCell>{item.id}</TableCell>
             <TableCell className="font-medium">{item.name}</TableCell>
             <TableCell>
               {item.category ? (
