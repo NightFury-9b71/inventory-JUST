@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  PurchaseForm,
+  CreatePurchaseRequest,
   useCreatePurchase,
 } from "@/services/purchaseService";
 
@@ -72,20 +72,20 @@ export function usePurchaseForm() {
     }
 
     try {
-      // Create multiple purchases, one for each item
-      const promises = purchaseItems.map(item => {
-        const purchaseData: PurchaseForm = {
-          item: { id: item.itemId },
+      // Create a single grouped purchase with multiple items
+      const purchaseData: CreatePurchaseRequest = {
+        supplier: supplier,
+        invoiceNumber: invoiceNumber || undefined,
+        remarks: remarks || undefined,
+        receiptUrl: receiptUrl || undefined,
+        items: purchaseItems.map(item => ({
+          itemId: item.itemId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-          supplier: supplier,
-          remarks: remarks || undefined,
-          receiptUrl: receiptUrl || undefined,
-        };
-        return createMutation.mutateAsync(purchaseData);
-      });
+        })),
+      };
 
-      await Promise.all(promises);
+      await createMutation.mutateAsync(purchaseData);
       resetForm();
       return true;
     } catch (error: any) {

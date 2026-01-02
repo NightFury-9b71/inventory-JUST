@@ -124,15 +124,17 @@ function HistoryTable({ purchases, transactions }: { purchases: Purchase[], tran
   
   // Create combined history with + and - indicators
   const historyItems = [
-    // Additions (+)
-    ...purchases.map(purchase => ({ 
-      type: '+',
-      itemName: purchase.item.name,
-      source: purchase.supplier || 'Supplier',
-      quantity: purchase.quantity,
-      date: purchase.purchasedDate,
-      reason: 'Purchase'
-    })),
+    // Additions (+) - flatten purchase items
+    ...purchases.flatMap(purchase => 
+      purchase.items.map(item => ({
+        type: '+',
+        itemName: item.item.name,
+        source: purchase.supplier || 'Supplier',
+        quantity: item.quantity,
+        date: purchase.purchasedDate,
+        reason: 'Purchase'
+      }))
+    ),
     ...transactions.filter(t => t.toOffice.id === parseInt(user?.officeId || '0') && t.status !== 'PENDING').map(transaction => ({ 
       type: '+',
       itemName: transaction.itemInstance.item.name,

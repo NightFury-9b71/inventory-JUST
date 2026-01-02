@@ -1,10 +1,13 @@
 package just.inventory.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "purchases")
@@ -17,12 +20,9 @@ public class Purchase {
     @Schema(hidden = true)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
-    
-    @Column(nullable = false)
-    private Double quantity;
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<PurchaseItem> items = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "purchased_by_user_id", nullable = false)
@@ -32,10 +32,9 @@ public class Purchase {
     @JoinColumn(name = "office_id", nullable = false)
     private Office office;
 
-    @Column(nullable = false)
-    private Double unitPrice;
-
     private String supplier;
+
+    private String invoiceNumber;
 
     private String remarks;
 
@@ -48,5 +47,17 @@ public class Purchase {
     @PrePersist
     protected void onCreate() {
         purchasedDate = LocalDateTime.now();
+    }
+    
+    @Transient
+    public Double getTotalAmount() {
+        return items.stream()
+                .mapToDouble(PurchaseItem::getTotalPrice)
+                .sum();
+    }
+    
+    @Transient
+    public Integer getTotalItems() {
+        return items.size();
     }
 }

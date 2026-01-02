@@ -101,8 +101,8 @@ export default function PurchasesPage() {
   const handleCreatePurchase = async () => {
     try {
       await createPurchase();
-      const count = purchaseItems.length;
-      toast.success(`Successfully created ${count} purchase${count !== 1 ? 's' : ''}`);
+      const itemCount = purchaseItems.length;
+      toast.success(`Successfully created purchase with ${itemCount} item${itemCount !== 1 ? 's' : ''}`);
       setShowCreateDialog(false);
     } catch (error) {
       console.error("Failed to create purchase:", error);

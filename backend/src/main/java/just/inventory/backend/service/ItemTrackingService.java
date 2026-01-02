@@ -43,19 +43,19 @@ public class ItemTrackingService {
         trackingInfo.put("remarks", itemInstance.getRemarks());
         trackingInfo.put("createdAt", itemInstance.getCreatedAt());
         
-        // Find purchase information
+        // Find purchase information by matching purchase date and item
         Purchase purchase = purchaseRepository.findAll().stream()
                 .filter(p -> p.getPurchasedDate().equals(itemInstance.getPurchaseDate()) &&
-                            p.getItem().getId().equals(itemInstance.getItem().getId()))
+                            p.getItems().stream().anyMatch(item -> 
+                                item.getItem().getId().equals(itemInstance.getItem().getId())))
                 .findFirst()
                 .orElse(null);
         
         if (purchase != null) {
             Map<String, Object> purchaseInfo = new LinkedHashMap<>();
             purchaseInfo.put("purchaseId", purchase.getId());
-            purchaseInfo.put("quantity", purchase.getQuantity());
-            purchaseInfo.put("unitPrice", purchase.getUnitPrice());
-            purchaseInfo.put("totalCost", purchase.getQuantity() * purchase.getUnitPrice());
+            purchaseInfo.put("totalAmount", purchase.getTotalAmount());
+            purchaseInfo.put("totalItems", purchase.getTotalItems());
             purchaseInfo.put("supplier", purchase.getSupplier());
             purchaseInfo.put("purchasedBy", purchase.getPurchasedBy().getFullName());
             purchaseInfo.put("purchasedById", purchase.getPurchasedBy().getId());

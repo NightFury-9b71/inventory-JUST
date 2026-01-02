@@ -183,31 +183,63 @@ export function extractPublicId(url: string): string | null {
  */
 export async function downloadFile(url: string, filename: string): Promise<void> {
   try {
-    // Fetch the file
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch file');
+    // For Cloudinary URLs, add download flag
+    let downloadUrl = url;
+    if (url.includes('cloudinary.com')) {
+      // Add fl_attachment flag to force download
+      downloadUrl = url.replace('/upload/', '/upload/fl_attachment/');
+      // If filename doesn't have the flag parameter, add it
+      if (!downloadUrl.includes('fl_attachment:')) {
+        downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment:${filename}/`);
+      }
     }
 
-    // Convert to blob
-    const blob = await response.blob();
+    // Try using fetch first
+    try {
+      const response = await fetch(downloadUrl, {
+        mode: 'cors',
+        credentials: 'omit'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    // Create object URL
-    const blobUrl = window.URL.createObjectURL(blob);
+      // Convert to blob
+      const blob = await response.blob();
 
-    // Create temporary link and trigger download
+      // Create object URL
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create temporary link and trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      return;
+    } catch (fetchError) {
+      console.warn('Fetch download failed, trying alternative method:', fetchError);
+      // Fall through to alternative method
+    }
+
+    // Fallback: open in new tab with download attribute
     const link = document.createElement('a');
-    link.href = blobUrl;
+    link.href = downloadUrl;
     link.download = filename;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
-
-    // Cleanup
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(blobUrl);
   } catch (error) {
     console.error('Download error:', error);
-    // Fallback: open in new tab if download fails
+    // Final fallback: just open in new tab
+
     window.open(url, '_blank');
   }
 }

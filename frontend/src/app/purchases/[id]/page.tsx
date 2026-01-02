@@ -4,8 +4,9 @@ import { PageLayout, Header } from "@/components/page";
 import { usePurchase } from "@/services/purchaseService";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Package, FileText, Calendar, User, Building, DollarSign, Download, Receipt as ReceiptIcon, ExternalLink } from "lucide-react";
+import { ArrowLeft, Package, FileText, Calendar, User, Building, DollarSign, Download, Receipt as ReceiptIcon, ExternalLink, Hash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,6 +42,10 @@ export default function PurchaseDetailPage() {
     if (!purchase) return;
     
     try {
+      const itemsSection = purchase.items.map((item, index) => 
+        `${index + 1}. ${item.item.name} - Qty: ${item.quantity}, Unit Price: ৳${item.unitPrice.toFixed(2)}, Total: ৳${item.totalPrice.toFixed(2)}`
+      ).join('\n');
+
       const doc = `
 PURCHASE RECEIPT
 ${'='.repeat(50)}
@@ -52,18 +57,20 @@ Date: ${new Date(purchase.purchasedDate).toLocaleDateString('en-US', {
   day: 'numeric'
 })}
 
-ITEM INFORMATION
-${'-'.repeat(50)}
-Item Name: ${purchase.item.name}
-Item ID: ${purchase.item.id}
-
 PURCHASE DETAILS
 ${'-'.repeat(50)}
 Supplier: ${purchase.supplier}
-Quantity: ${purchase.quantity}
-Unit Price: ৳${purchase.unitPrice.toFixed(2)}
-Total Amount: ৳${(purchase.quantity * purchase.unitPrice).toFixed(2)}
-${purchase.remarks ? `\nRemarks: ${purchase.remarks}` : ''}
+${purchase.invoiceNumber ? `Invoice Number: ${purchase.invoiceNumber}` : ''}
+${purchase.remarks ? `Remarks: ${purchase.remarks}` : ''}
+
+ITEMS
+${'-'.repeat(50)}
+${itemsSection}
+
+TOTAL SUMMARY
+${'-'.repeat(50)}
+Total Items: ${purchase.totalItems}
+Total Amount: ৳${purchase.totalAmount.toFixed(2)}
 
 OFFICE INFORMATION
 ${'-'.repeat(50)}
@@ -153,14 +160,12 @@ Generated on: ${new Date().toLocaleString()}
     );
   }
 
-  const totalAmount = purchase.quantity * purchase.unitPrice;
-
   return (
     <PageLayout
       header={
         <Header 
           title={`Purchase #${purchase.id}`}
-          subtitle="Complete purchase details"
+          subtitle="Complete purchase details with all items"
           actions={
             <div className="flex gap-2">
               <Button variant="outline" onClick={downloadPurchasePDF}>
@@ -176,42 +181,27 @@ Generated on: ${new Date().toLocaleString()}
         />
       }
       body={
-        <div className="mx-auto my-8 max-w-4xl space-y-6">
-          {/* Item Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Item Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Item Name</p>
-                  <p className="font-medium">{purchase.item.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Item ID</p>
-                  <p className="font-medium">{purchase.item.id}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Purchase Details */}
+        <div className="mx-auto my-8 max-w-5xl space-y-6">
+          {/* Purchase Header Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Purchase Details
+                Purchase Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                   <p className="text-sm text-gray-500">Supplier</p>
                   <p className="font-medium">{purchase.supplier}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 flex items-center gap-1">
+                    <Hash className="h-4 w-4" />
+                    Invoice Number
+                  </p>
+                  <p className="font-medium">{purchase.invoiceNumber || '-'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 flex items-center gap-1">
@@ -227,15 +217,11 @@ Generated on: ${new Date().toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Quantity</p>
-                  <p className="font-medium text-lg">{purchase.quantity}</p>
-                </div>
-                <div>
                   <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <DollarSign className="h-4 w-4" />
-                    Unit Price
+                    <Building className="h-4 w-4" />
+                    Office
                   </p>
-                  <p className="font-medium text-lg">৳{purchase.unitPrice.toFixed(2)}</p>
+                  <p className="font-medium">{purchase.office.name}</p>
                 </div>
               </div>
               
@@ -245,13 +231,49 @@ Generated on: ${new Date().toLocaleString()}
                   <p className="font-medium mt-1">{purchase.remarks}</p>
                 </div>
               )}
+            </CardContent>
+          </Card>
 
-              <div className="pt-4 border-t">
-                <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-                  <p className="text-lg font-semibold">Total Amount</p>
-                  <p className="text-2xl font-bold text-blue-600">৳{totalAmount.toFixed(2)}</p>
-                </div>
-              </div>
+          {/* Items Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                Purchased Items
+              </CardTitle>
+              <CardDescription>
+                {purchase.totalItems} item{purchase.totalItems !== 1 ? 's' : ''} in this purchase
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">#</TableHead>
+                    <TableHead>Item Name</TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right">Unit Price</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {purchase.items.map((item, index) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell>{item.item.name}</TableCell>
+                      <TableCell className="text-right">{item.quantity}</TableCell>
+                      <TableCell className="text-right">৳{item.unitPrice.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-medium">৳{item.totalPrice.toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="bg-blue-50 dark:bg-blue-950 font-semibold">
+                    <TableCell colSpan={4} className="text-right">Grand Total</TableCell>
+                    <TableCell className="text-right text-lg text-blue-600">
+                      ৳{purchase.totalAmount.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
 
@@ -329,32 +351,23 @@ Generated on: ${new Date().toLocaleString()}
             </Card>
           )}
 
-          {/* Office and User Information */}
+          {/* Purchaser Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Office & Purchaser Information
+                <User className="h-5 w-5" />
+                Purchaser Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Office</p>
-                  <p className="font-medium">{purchase.office.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <User className="h-4 w-4" />
-                    Purchased By
-                  </p>
-                  <Link 
-                    href={`/profile/${purchase.purchasedBy.id}`}
-                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
-                  >
-                    {purchase.purchasedBy.name || purchase.purchasedBy.username}
-                  </Link>
-                </div>
+            <CardContent>
+              <div>
+                <p className="text-sm text-gray-500">Purchased By</p>
+                <Link 
+                  href={`/profile/${purchase.purchasedBy.id}`}
+                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline text-lg"
+                >
+                  {purchase.purchasedBy.name || purchase.purchasedBy.username}
+                </Link>
               </div>
             </CardContent>
           </Card>

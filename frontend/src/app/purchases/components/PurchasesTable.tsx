@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileX, Eye, Download } from "lucide-react";
+import { FileX, Eye, Download, Package } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Purchase } from "@/services/purchaseService";
@@ -29,7 +29,6 @@ function LoadingRow() {
       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
       <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-      <TableCell><Skeleton className="h-4 w-20" /></TableCell>
       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
     </TableRow>
@@ -39,7 +38,7 @@ function LoadingRow() {
 function EmptyState() {
   return (
     <TableRow>
-      <TableCell colSpan={9} className="h-64">
+      <TableCell colSpan={8} className="h-64">
         <div className="flex flex-col items-center justify-center text-center space-y-3">
           <FileX className="h-12 w-12 text-gray-400" />
           <p className="text-sm text-gray-500 max-w-md">
@@ -53,6 +52,10 @@ function EmptyState() {
 
 const downloadPurchasePDF = (purchase: Purchase) => {
   try {
+    const itemsSection = purchase.items.map((item, index) => 
+      `${index + 1}. ${item.item.name} - Qty: ${item.quantity}, Unit Price: ৳${item.unitPrice.toFixed(2)}, Total: ৳${item.totalPrice.toFixed(2)}`
+    ).join('\n');
+
     const doc = `
 PURCHASE RECEIPT
 ${'='.repeat(50)}
@@ -64,18 +67,20 @@ Date: ${new Date(purchase.purchasedDate).toLocaleDateString('en-US', {
   day: 'numeric'
 })}
 
-ITEM INFORMATION
-${'-'.repeat(50)}
-Item Name: ${purchase.item.name}
-Item ID: ${purchase.item.id}
-
 PURCHASE DETAILS
 ${'-'.repeat(50)}
 Supplier: ${purchase.supplier}
-Quantity: ${purchase.quantity}
-Unit Price: ৳${purchase.unitPrice.toFixed(2)}
-Total Amount: ৳${(purchase.quantity * purchase.unitPrice).toFixed(2)}
-${purchase.remarks ? `\nRemarks: ${purchase.remarks}` : ''}
+${purchase.invoiceNumber ? `Invoice Number: ${purchase.invoiceNumber}` : ''}
+${purchase.remarks ? `Remarks: ${purchase.remarks}` : ''}
+
+ITEMS
+${'-'.repeat(50)}
+${itemsSection}
+
+TOTAL SUMMARY
+${'-'.repeat(50)}
+Total Items: ${purchase.totalItems}
+Total Amount: ৳${purchase.totalAmount.toFixed(2)}
 
 OFFICE INFORMATION
 ${'-'.repeat(50)}
@@ -116,12 +121,11 @@ export function PurchasesTable({
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
-          <TableHead>Item</TableHead>
           <TableHead>Supplier</TableHead>
+          <TableHead>Invoice No.</TableHead>
           <TableHead>Purchase Date</TableHead>
-          <TableHead>Quantity</TableHead>
-          <TableHead>Unit Price</TableHead>
-          <TableHead>Total</TableHead>
+          <TableHead>Items</TableHead>
+          <TableHead>Total Amount</TableHead>
           <TableHead>Purchased By</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -139,15 +143,19 @@ export function PurchasesTable({
           data.map((purchase) => (
             <TableRow key={purchase.id}>
               <TableCell className="font-medium">{purchase.id}</TableCell>
-              <TableCell>{purchase.item.name}</TableCell>
               <TableCell>{purchase.supplier}</TableCell>
+              <TableCell>{purchase.invoiceNumber || '-'}</TableCell>
               <TableCell>
                 {new Date(purchase.purchasedDate).toLocaleDateString()}
               </TableCell>
-              <TableCell>{purchase.quantity}</TableCell>
-              <TableCell>৳{purchase.unitPrice.toFixed(2)}</TableCell>
               <TableCell>
-                ৳{(purchase.quantity * purchase.unitPrice).toFixed(2)}
+                <div className="flex items-center gap-2">
+                  <Package className="w-4 h-4 text-gray-500" />
+                  <span>{purchase.totalItems} item{purchase.totalItems !== 1 ? 's' : ''}</span>
+                </div>
+              </TableCell>
+              <TableCell className="font-medium">
+                ৳{purchase.totalAmount.toFixed(2)}
               </TableCell>
               <TableCell>
                 <Link 

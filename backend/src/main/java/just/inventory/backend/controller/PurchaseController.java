@@ -1,7 +1,12 @@
 package just.inventory.backend.controller;
 
+import just.inventory.backend.dto.CreatePurchaseRequest;
+import just.inventory.backend.dto.PurchaseResponse;
+import just.inventory.backend.model.Item;
 import just.inventory.backend.model.Purchase;
+import just.inventory.backend.model.PurchaseItem;
 import just.inventory.backend.model.User;
+import just.inventory.backend.repository.ItemRepository;
 import just.inventory.backend.repository.UserRepository;
 import just.inventory.backend.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/purchases")
@@ -22,9 +28,12 @@ public class PurchaseController {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private ItemRepository itemRepository;
 
     @PostMapping
-    public ResponseEntity<?> createPurchase(@RequestBody Purchase purchase) {
+    public ResponseEntity<?> createPurchase(@RequestBody CreatePurchaseRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username)
@@ -41,21 +50,48 @@ public class PurchaseController {
                 .body("Only admins can create purchases");
         }
         
+        // Build Purchase entity from request
+        Purchase purchase = new Purchase();
+        purchase.setSupplier(request.getSupplier());
+        purchase.setInvoiceNumber(request.getInvoiceNumber());
+        purchase.setRemarks(request.getRemarks());
+        purchase.setReceiptUrl(request.getReceiptUrl());
         purchase.setPurchasedBy(currentUser);
         purchase.setOffice(currentUser.getOffice());
+        
+        // Add purchase items
+        for (CreatePurchaseRequest.PurchaseItemRequest itemRequest : request.getItems()) {
+            Item item = itemRepository.findById(itemRequest.getItemId())
+                    .orElseThrow(() -> new RuntimeException("Item not found: " + itemRequest.getItemId()));
+            
+            PurchaseItem purchaseItem = new PurchaseItem();
+            purchaseItem.setItem(item);
+            purchaseItem.setQuantity(itemRequest.getQuantity());
+            purchaseItem.setUnitPrice(itemRequest.getUnitPrice());
+            purchaseItem.setPurchase(purchase);
+            
+            purchase.getItems().add(purchaseItem);
+        }
+        
         Purchase createdPurchase = purchaseService.createPurchase(purchase);
-        return new ResponseEntity<>(createdPurchase, HttpStatus.CREATED);
+        PurchaseResponse response = mapToResponse(createdPurchase);
+        
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Purchase>> getAllPurchases() {
+    public ResponseEntity<List<PurchaseResponse>> getAllPurchases() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         List<Purchase> purchases = purchaseService.getPurchasesByOffice(currentUser.getOffice().getId());
-        return ResponseEntity.ok(purchases);
+        List<PurchaseResponse> responses = purchases.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
@@ -73,12 +109,64 @@ public class PurchaseController {
                 .body("You can only view purchases for your own office");
         }
         
-        return ResponseEntity.ok(purchase);
+        PurchaseResponse response = mapToResponse(purchase);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/office/{officeId}")
-    public ResponseEntity<List<Purchase>> getPurchasesByOffice(@PathVariable Long officeId) {
+    public ResponseEntity<List<PurchaseResponse>> getPurchasesByOffice(@PathVariable Long officeId) {
         List<Purchase> purchases = purchaseService.getPurchasesByOffice(officeId);
-        return ResponseEntity.ok(purchases);
+        List<PurchaseResponse> responses = purchases.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(responses);
+    }
+    
+    private PurchaseResponse mapToResponse(Purchase purchase) {
+        PurchaseResponse response = new PurchaseResponse();
+        response.setId(purchase.getId());
+        response.setSupplier(purchase.getSupplier());
+        response.setInvoiceNumber(purchase.getInvoiceNumber());
+        response.setRemarks(purchase.getRemarks());
+        response.setReceiptUrl(purchase.getReceiptUrl());
+        response.setPurchasedDate(purchase.getPurchasedDate());
+        response.setTotalAmount(purchase.getTotalAmount());
+        response.setTotalItems(purchase.getTotalItems());
+        
+        // Map user
+        PurchaseResponse.UserSummary userSummary = new PurchaseResponse.UserSummary();
+        userSummary.setId(purchase.getPurchasedBy().getId());
+        userSummary.setUsername(purchase.getPurchasedBy().getUsername());
+        userSummary.setName(purchase.getPurchasedBy().getFullName());
+        userSummary.setFullName(purchase.getPurchasedBy().getFullName());
+        response.setPurchasedBy(userSummary);
+        
+        // Map office
+        PurchaseResponse.OfficeSummary officeSummary = new PurchaseResponse.OfficeSummary();
+        officeSummary.setId(purchase.getOffice().getId());
+        officeSummary.setName(purchase.getOffice().getName());
+        response.setOffice(officeSummary);
+        
+        // Map items
+        List<PurchaseResponse.PurchaseItemResponse> itemResponses = purchase.getItems().stream()
+                .map(item -> {
+                    PurchaseResponse.PurchaseItemResponse itemResponse = new PurchaseResponse.PurchaseItemResponse();
+                    itemResponse.setId(item.getId());
+                    itemResponse.setQuantity(item.getQuantity());
+                    itemResponse.setUnitPrice(item.getUnitPrice());
+                    itemResponse.setTotalPrice(item.getTotalPrice());
+                    
+                    PurchaseResponse.ItemSummary itemSummary = new PurchaseResponse.ItemSummary();
+                    itemSummary.setId(item.getItem().getId());
+                    itemSummary.setName(item.getItem().getName());
+                    itemResponse.setItem(itemSummary);
+                    
+                    return itemResponse;
+                })
+                .collect(Collectors.toList());
+        response.setItems(itemResponses);
+        
+        return response;
     }
 }

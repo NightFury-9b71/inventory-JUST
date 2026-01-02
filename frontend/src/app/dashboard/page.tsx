@@ -221,11 +221,20 @@ export default function DashboardPage() {
                 ) : recentPurchases.length > 0 ? (
                   <div className="space-y-3">
                     {recentPurchases.map((purchase) => (
-                      <div key={purchase.id} className="flex items-center justify-between">
+                      <div 
+                        key={purchase.id} 
+                        className="flex items-center justify-between hover:bg-accent p-2 rounded-lg cursor-pointer transition-colors"
+                        onClick={() => router.push(`/purchases/${purchase.id}`)}
+                      >
                         <div>
-                          <p className="text-sm font-medium">{purchase.item.name}</p>
+                          <p className="text-sm font-medium">
+                            {purchase.supplier} - {purchase.totalItems} item{purchase.totalItems !== 1 ? 's' : ''}
+                          </p>
                           <p className="text-xs text-muted-foreground">
-                            {purchase.quantity} units • ৳{(purchase.quantity * purchase.unitPrice).toFixed(2)}
+                            {purchase.items.map(item => item.item.name).join(', ')}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Total: ৳{purchase.totalAmount.toFixed(2)}
                           </p>
                         </div>
                         <Badge variant="outline">
@@ -258,7 +267,11 @@ export default function DashboardPage() {
                 ) : recentRequests.length > 0 ? (
                   <div className="space-y-3">
                     {recentRequests.map((request) => (
-                      <div key={request.id} className="flex items-center justify-between">
+                      <div 
+                        key={request.id} 
+                        className="flex items-center justify-between hover:bg-accent p-2 rounded-lg cursor-pointer transition-colors"
+                        onClick={() => router.push('/requisitions')}
+                      >
                         <div>
                           <p className="text-sm font-medium">{request.item.name}</p>
                           <p className="text-xs text-muted-foreground">
@@ -303,7 +316,11 @@ export default function DashboardPage() {
                       const direction = isOutgoing ? 'to' : 'from';
                       
                       return (
-                        <div key={transaction.id} className="flex items-center justify-between">
+                        <div 
+                          key={transaction.id} 
+                          className="flex items-center justify-between hover:bg-accent p-2 rounded-lg cursor-pointer transition-colors"
+                          onClick={() => router.push('/inventory')}
+                        >
                           <div>
                             <p className="text-sm font-medium">{transaction.itemInstance.item.name}</p>
                             <p className="text-xs text-muted-foreground">

@@ -1,18 +1,27 @@
 import api from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export interface Purchase {
+export interface PurchaseItem {
   id: number;
-  purchasedDate: string;
-  supplier: string;
-  remarks?: string;
-  quantity: number;
-  unitPrice: number;
-  receiptUrl?: string;
   item: {
     id: number;
     name: string;
   };
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface Purchase {
+  id: number;
+  purchasedDate: string;
+  supplier: string;
+  invoiceNumber?: string;
+  remarks?: string;
+  receiptUrl?: string;
+  items: PurchaseItem[];
+  totalAmount: number;
+  totalItems: number;
   office: {
     id: number;
     name: string;
@@ -25,19 +34,22 @@ export interface Purchase {
   };
 }
 
-export interface PurchaseForm {
-  item: {
-    id: number;
-  };
+export interface CreatePurchaseItemRequest {
+  itemId: number;
   quantity: number;
   unitPrice: number;
+}
+
+export interface CreatePurchaseRequest {
   supplier: string;
+  invoiceNumber?: string;
   remarks?: string;
   receiptUrl?: string;
+  items: CreatePurchaseItemRequest[];
 }
 
 // Create a new purchase
-export const createPurchase = async (purchase: PurchaseForm): Promise<Purchase> => {
+export const createPurchase = async (purchase: CreatePurchaseRequest): Promise<Purchase> => {
   const response = await api.post("/purchases", purchase);
   return response.data;
 };

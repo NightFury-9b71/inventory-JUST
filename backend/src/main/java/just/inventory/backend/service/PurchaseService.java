@@ -29,12 +29,6 @@ public class PurchaseService {
     @Transactional
     public Purchase createPurchase(Purchase purchase) {
         // Fetch and set relationships
-        if (purchase.getItem() != null && purchase.getItem().getId() != null) {
-            Item item = itemRepository.findById(purchase.getItem().getId())
-                    .orElseThrow(() -> new RuntimeException("Item not found"));
-            purchase.setItem(item);
-        }
-        
         if (purchase.getOffice() != null && purchase.getOffice().getId() != null) {
             Office office = officeRepository.findById(purchase.getOffice().getId())
                     .orElseThrow(() -> new RuntimeException("Office not found"));
@@ -47,24 +41,42 @@ public class PurchaseService {
             purchase.setPurchasedBy(user);
         }
         
+        // Save the purchase header first
         Purchase savedPurchase = purchaseRepository.save(purchase);
         
-        // Create item instances
+        // Get inventory for this office
         Inventory inventory = savedPurchase.getOffice().getInventory();
         if (inventory == null) {
             throw new RuntimeException("Office does not have an inventory");
         }
         
-        for (int i = 0; i < savedPurchase.getQuantity(); i++) {
-            ItemInstance instance = new ItemInstance();
-            instance.setItem(savedPurchase.getItem());
-            instance.setBarcode(savedPurchase.getItem().getName().substring(0, 3).toUpperCase() + "-" + savedPurchase.getOffice().getCode() + "-" + System.currentTimeMillis() + "-" + i);
-            instance.setInventory(inventory);
-            instance.setOwnerOffice(savedPurchase.getOffice());
-            instance.setStatus(ItemInstance.ItemStatus.AVAILABLE);
-            instance.setPurchaseDate(savedPurchase.getPurchasedDate());
-            instance.setPurchasePrice(savedPurchase.getUnitPrice());
-            itemInstanceRepository.save(instance);
+        // Process each purchase item
+        for (PurchaseItem purchaseItem : purchase.getItems()) {
+            // Fetch and set item
+            if (purchaseItem.getItem() != null && purchaseItem.getItem().getId() != null) {
+                Item item = itemRepository.findById(purchaseItem.getItem().getId())
+                        .orElseThrow(() -> new RuntimeException("Item not found"));
+                purchaseItem.setItem(item);
+            }
+            
+            // Link to purchase
+            purchaseItem.setPurchase(savedPurchase);
+            
+            // Create item instances for this purchase item
+            for (int i = 0; i < purchaseItem.getQuantity(); i++) {
+                ItemInstance instance = new ItemInstance();
+                instance.setItem(purchaseItem.getItem());
+                instance.setBarcode(purchaseItem.getItem().getName().substring(0, 3).toUpperCase() 
+                    + "-" + savedPurchase.getOffice().getCode() 
+                    + "-" + System.currentTimeMillis() 
+                    + "-" + i);
+                instance.setInventory(inventory);
+                instance.setOwnerOffice(savedPurchase.getOffice());
+                instance.setStatus(ItemInstance.ItemStatus.AVAILABLE);
+                instance.setPurchaseDate(savedPurchase.getPurchasedDate());
+                instance.setPurchasePrice(purchaseItem.getUnitPrice());
+                itemInstanceRepository.save(instance);
+            }
         }
         
         return savedPurchase;
