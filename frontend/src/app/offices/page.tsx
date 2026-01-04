@@ -11,6 +11,7 @@ import { FilterGroup as Filter } from "@/components/filters";
 import { SearchGroup as Search } from "@/components/search";
 import { PaginationGroup as Pagination } from "@/components/pagination";
 import { ActionButton } from "@/components/actions";
+import { Button } from "@/components/ui/button";
 
 import {
   Table,
@@ -64,9 +65,14 @@ const paginationConfig = {
   maxVisiblePages: 5,
 };
 
-const Actions = () => (
-  <ActionButton path="/api/offices" type="add" label="Create Office" loadingText="Creating" payload={{}} />
-);
+const Actions = () => {
+  const router = useRouter();
+  return (
+    <Button onClick={() => router.push("/offices/new")}>
+      Create Office
+    </Button>
+  );
+};
 
 const RowActions = ({ item, onView, onEdit }: { item: Office, onView: (item: any) => void, onEdit: (item: any) => void }) => (
   <div className="flex gap-2">
