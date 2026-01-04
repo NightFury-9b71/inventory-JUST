@@ -42,16 +42,17 @@ const paginationConfig = {
 };
 
 const RowActions = ({ item, onView, onPrintBarcode }: { item: ItemInstance, onView: (item: any) => void, onPrintBarcode: (item: ItemInstance) => void }) => (
-  <div className="flex gap-2">
+  <div className="flex gap-2 sm:gap-3">
     <Eye
-      className="w-5 h-5 cursor-pointer hover:text-blue-600"
+      className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-blue-600 transition-colors"
       onClick={() => onView(item)}
     />
-    <QrCode
-      className="w-5 h-5 cursor-pointer hover:text-green-600"
-      onClick={() => onPrintBarcode(item)}
-      title="Print Barcode"
-    />
+    <span title="Print Barcode">
+      <QrCode
+        className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-green-600 transition-colors"
+        onClick={() => onPrintBarcode(item)}
+      />
+    </span>
   </div>
 );
 
@@ -116,21 +117,22 @@ function Body({ data, onPrintBarcode, onPrintGroupBarcodes }: {
 
   return(
     <>
-    <div className="mx-auto my-8 max-w-7xl">
-      <Table>
-        <TableCaption>Inventory items belonging to your office.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-10"></TableHead>
-            <TableHead>Item Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Barcode</TableHead>
-            <TableHead>Purchase Date</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+    <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-7xl">
+      <div className="overflow-x-auto -mx-3 sm:mx-0">
+        <Table>
+          <TableCaption className="text-xs sm:text-sm">Inventory items belonging to your office.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8 sm:w-10 text-xs sm:text-sm"></TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Item Name</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Category</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Quantity</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Barcode</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden xl:table-cell">Purchase Date</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
           {data.map((group) => {
             const key = `${group.itemId}-${group.itemName}`;
             const isExpanded = expandedGroups.has(key);
@@ -146,50 +148,51 @@ function Body({ data, onPrintBarcode, onPrintGroupBarcodes }: {
                     onClick={() => toggleGroup(key)}
                   >
                     {isExpanded ? (
-                      <ChevronDown className="w-4 h-4" />
+                      <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                     ) : (
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
                     )}
                   </TableCell>
                   <TableCell 
-                    className="font-semibold cursor-pointer"
+                    className="text-xs sm:text-sm font-semibold cursor-pointer"
                     onClick={() => toggleGroup(key)}
                   >
                     {group.itemName}
                   </TableCell>
-                  <TableCell onClick={() => toggleGroup(key)} className="cursor-pointer">
+                  <TableCell onClick={() => toggleGroup(key)} className="cursor-pointer hidden md:table-cell">
                     {group.category ? (
-                      <Badge variant="outline">{group.category.name}</Badge>
+                      <Badge variant="outline" className="text-xs">{group.category.name}</Badge>
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}
                   </TableCell>
                   <TableCell onClick={() => toggleGroup(key)} className="cursor-pointer">
-                    <Badge variant="secondary">{group.instances.length} items</Badge>
+                    <Badge variant="secondary" className="text-xs">{group.instances.length} items</Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground" onClick={() => toggleGroup(key)}>-</TableCell>
-                  <TableCell className="text-muted-foreground" onClick={() => toggleGroup(key)}>-</TableCell>
+                  <TableCell className="text-xs sm:text-sm text-muted-foreground hidden lg:table-cell" onClick={() => toggleGroup(key)}>-</TableCell>
+                  <TableCell className="text-xs sm:text-sm text-muted-foreground hidden xl:table-cell" onClick={() => toggleGroup(key)}>-</TableCell>
                   <TableCell>
-                    <QrCode
-                      className="w-5 h-5 cursor-pointer hover:text-green-600"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPrintGroupBarcodes(group);
-                      }}
-                      title={`Print all barcodes for ${group.itemName}`}
-                    />
+                    <span title={`Print all barcodes for ${group.itemName}`}>
+                      <QrCode
+                        className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-green-600 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onPrintGroupBarcodes(group);
+                        }}
+                      />
+                    </span>
                   </TableCell>
                 </TableRow>
 
                 {/* Individual Instance Rows */}
                 {isExpanded && group.instances.map((instance) => (
-                  <TableRow key={instance.id} className="bg-background/50 border-l-4 border-l-muted">
-                    <TableCell className="w-10"></TableCell>
-                    <TableCell className="pl-8 text-muted-foreground">↳</TableCell>
+                  <TableRow key={instance.id} className="bg-background/50 border-l-2 sm:border-l-4 border-l-muted">
+                    <TableCell className="w-8 sm:w-10"></TableCell>
+                    <TableCell className="text-xs sm:text-sm pl-4 sm:pl-8 text-muted-foreground">↳</TableCell>
+                    <TableCell className="hidden md:table-cell"></TableCell>
                     <TableCell></TableCell>
-                    <TableCell></TableCell>
-                    <TableCell className="font-mono text-sm">{instance.barcode}</TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell className="text-xs sm:text-sm font-mono hidden lg:table-cell">{instance.barcode}</TableCell>
+                    <TableCell className="text-xs sm:text-sm hidden xl:table-cell">
                       {instance.purchaseDate ? (
                         new Date(instance.purchaseDate).toLocaleDateString()
                       ) : (
@@ -206,6 +209,7 @@ function Body({ data, onPrintBarcode, onPrintGroupBarcodes }: {
           })}
         </TableBody>
       </Table>
+      </div>
     </div>
     </>
   )
@@ -278,42 +282,44 @@ function HistoryTable({ purchases, transactions }: { purchases: Purchase[], tran
   return (
     <>
 
-      <div className="mx-auto my-8 max-w-7xl">
-        <Table>
-          <TableCaption>Complete inventory movement history.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Item Name</TableHead>
-              <TableHead>Source/Destination</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {historyItems.length === 0 ? (
+      <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-7xl">
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
+          <Table>
+            <TableCaption className="text-xs sm:text-sm">Complete inventory movement history.</TableCaption>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No transaction history available
-                </TableCell>
+                <TableHead className="text-xs sm:text-sm whitespace-nowrap">Item Name</TableHead>
+                <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Source/Destination</TableHead>
+                <TableHead className="text-xs sm:text-sm whitespace-nowrap">Quantity</TableHead>
+                <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Type</TableHead>
+                <TableHead className="text-xs sm:text-sm whitespace-nowrap">Date</TableHead>
               </TableRow>
-            ) : (
-              historyItems.map((item: HistoryItem, index: number) => (
-                <TableRow key={`${item.type}-${index}`}>
-                  <TableCell className="font-medium">{item.itemName}</TableCell>
-                  <TableCell>{item.source}</TableCell>
-                  <TableCell className={`font-medium ${item.type === '+' ? 'text-green-600' : 'text-red-600'}`}>
-                    {item.type === '+' ? '+' : '-'}{item.quantity}
-                  </TableCell>
-                  <TableCell>{item.reason}</TableCell>
-                  <TableCell>
-                    {new Date(item.date).toLocaleDateString()}
+            </TableHeader>
+            <TableBody>
+              {historyItems.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-xs sm:text-sm text-muted-foreground">
+                    No transaction history available
                   </TableCell>
                 </TableRow>
-              ))
-            )}
+              ) : (
+                historyItems.map((item: HistoryItem, index: number) => (
+                  <TableRow key={`${item.type}-${index}`}>
+                    <TableCell className="text-xs sm:text-sm font-medium">{item.itemName}</TableCell>
+                    <TableCell className="text-xs sm:text-sm hidden md:table-cell">{item.source}</TableCell>
+                    <TableCell className={`text-xs sm:text-sm font-medium ${item.type === '+' ? 'text-green-600' : 'text-red-600'}`}>
+                      {item.type === '+' ? '+' : '-'}{item.quantity}
+                    </TableCell>
+                    <TableCell className="text-xs sm:text-sm hidden lg:table-cell">{item.reason}</TableCell>
+                    <TableCell className="text-xs sm:text-sm">
+                      {new Date(item.date).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
           </TableBody>
         </Table>
+        </div>
       </div>
     </>
   );
@@ -378,11 +384,11 @@ export default function InventoryPage() {
       <PageLayout
         header={<Header title="Inventory" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle>Authentication Required</CardTitle>
-                <CardDescription>Please log in to view inventory</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Authentication Required</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Please log in to view inventory</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -396,10 +402,10 @@ export default function InventoryPage() {
       <PageLayout
         header={<Header title="My Office Inventory" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
             <div className="flex flex-col items-center gap-2">
-              <Package className="w-8 h-8 animate-pulse" />
-              <p>Loading inventory...</p>
+              <Package className="w-6 h-6 sm:w-8 sm:h-8 animate-pulse" />
+              <p className="text-sm sm:text-base">Loading inventory...</p>
             </div>
           </div>
         }
@@ -412,11 +418,11 @@ export default function InventoryPage() {
       <PageLayout
         header={<Header title="My Office Inventory" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle className="text-destructive">Error</CardTitle>
-                <CardDescription>Failed to load inventory data</CardDescription>
+                <CardTitle className="text-lg sm:text-xl text-destructive">Error</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Failed to load inventory data</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -434,8 +440,8 @@ export default function InventoryPage() {
             subtitle="View current items and complete history"
             actions={
               items.length > 0 ? (
-                <Button onClick={handlePrintAllBarcodes} variant="outline">
-                  <QrCode className="mr-2 h-4 w-4" />
+                <Button onClick={handlePrintAllBarcodes} variant="outline" className="w-full sm:w-auto text-sm sm:text-base">
+                  <QrCode className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Print All Barcodes
                 </Button>
               ) : null
@@ -443,26 +449,28 @@ export default function InventoryPage() {
           />
         }
         body={
-          <div className="mx-auto my-4 max-w-7xl">
+          <div className="mx-auto my-2 sm:my-4 max-w-7xl">
             <Tabs defaultValue="current" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="current" className="flex items-center gap-2">
-                  <Package className="w-4 h-4" />
-                  Current Items ({groupedData.length} unique, {items.length} total)
+              <TabsList className="grid w-full grid-cols-2 text-xs sm:text-sm">
+                <TabsTrigger value="current" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4">
+                  <Package className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden xs:inline">Current Items</span>
+                  <span className="xs:hidden">Current</span>
+                  <span className="ml-1">({groupedData.length}/{items.length})</span>
                 </TabsTrigger>
-                <TabsTrigger value="history" className="flex items-center gap-2">
-                  <History className="w-4 h-4" />
-                  History ({historyCount})
+                <TabsTrigger value="history" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4">
+                  <History className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>History ({historyCount})</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="current" className="space-y-4">
+              <TabsContent value="current" className="space-y-3 sm:space-y-4">
 
-                <div className="mb-4">
+                <div className="mb-3 sm:mb-4">
                   <input
                     type="text"
                     placeholder="Search inventory items..."
-                    className="border rounded px-3 py-2 w-64"
+                    className="border rounded px-3 py-2 w-full sm:w-64 text-sm sm:text-base"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -470,9 +478,9 @@ export default function InventoryPage() {
 
                 {groupedData.length === 0 ? (
                   <div className="flex items-center justify-center h-[30vh]">
-                    <div className="text-center">
-                      <Package className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                      <p className="text-gray-500">
+                    <div className="text-center px-4">
+                      <Package className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 text-gray-400" />
+                      <p className="text-gray-500 text-sm sm:text-base">
                         {items.length === 0 
                           ? "No inventory items found in your office"
                           : "No items match your search"}
@@ -495,7 +503,7 @@ export default function InventoryPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="history" className="space-y-4">
+            <TabsContent value="history" className="space-y-3 sm:space-y-4">
               <HistoryTable purchases={purchases} transactions={transactions} />
             </TabsContent>
           </Tabs>

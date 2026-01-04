@@ -26,7 +26,7 @@ import { usePurchaseForm } from "./hooks/usePurchaseForm";
 import { BarcodePrintDialog } from "@/components/BarcodePrintDialog";
 
 const searchConfig = {
-  placeholder: "Search by supplier, invoice number...",
+  placeholder: "Search supplier, invoice...",
   searchKeys: ["supplier", "invoiceNumber", "remarks"],
 };
 
@@ -88,11 +88,11 @@ export default function PurchasesPage() {
       <PageLayout
         header={<Header title="Purchases" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle>Authentication Required</CardTitle>
-                <CardDescription>Please log in to view purchases</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Authentication Required</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Please log in to view purchases</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -147,8 +147,8 @@ export default function PurchasesPage() {
             subtitle="Record and manage item purchases for your office"
             actions={
               isAdmin ? (
-                <Button onClick={() => setShowCreateDialog(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
+                <Button onClick={() => setShowCreateDialog(true)} className="w-full sm:w-auto text-sm sm:text-base">
+                  <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   New Purchase
                 </Button>
               ) : null
@@ -156,7 +156,7 @@ export default function PurchasesPage() {
           />
         }
         body={
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Search 
               config={searchConfig} 
               data={purchases} 

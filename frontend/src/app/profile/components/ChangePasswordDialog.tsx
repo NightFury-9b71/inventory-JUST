@@ -14,6 +14,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface ChangePasswordDialogProps {
 }
 
 export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialogProps) {
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPasswords, setShowPasswords] = useState({
@@ -198,16 +200,17 @@ export function ChangePasswordDialog({ open, onOpenChange }: ChangePasswordDialo
             </Alert>
           )}
 
-          <DialogFooter>
+          <DialogFooter className={isMobile ? 'flex-col gap-2' : ''}>
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className={isMobile ? 'w-full' : ''}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className={isMobile ? 'w-full' : ''}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

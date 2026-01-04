@@ -29,11 +29,11 @@ export default function PurchaseDetailPage() {
       <PageLayout
         header={<Header title="Purchase Details" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle>Authentication Required</CardTitle>
-                <CardDescription>Please log in to view purchase details</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Authentication Required</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Please log in to view purchase details</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -122,16 +122,16 @@ Generated on: ${new Date().toLocaleString()}
       <PageLayout
         header={<Header title="Purchase Details" subtitle="Loading..." />}
         body={
-          <div className="mx-auto my-8 max-w-4xl space-y-6">
+          <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-4xl space-y-4 sm:space-y-6 px-4 sm:px-0">
             <Card>
               <CardHeader>
-                <Skeleton className="h-8 w-64" />
-                <Skeleton className="h-4 w-96" />
+                <Skeleton className="h-6 sm:h-8 w-48 sm:w-64" />
+                <Skeleton className="h-3 sm:h-4 w-64 sm:w-96" />
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
+              <CardContent className="space-y-3 sm:space-y-4">
+                <Skeleton className="h-16 sm:h-20 w-full" />
+                <Skeleton className="h-16 sm:h-20 w-full" />
+                <Skeleton className="h-16 sm:h-20 w-full" />
               </CardContent>
             </Card>
           </div>
@@ -145,15 +145,15 @@ Generated on: ${new Date().toLocaleString()}
       <PageLayout
         header={<Header title="Purchase Details" subtitle="Error loading purchase" />}
         body={
-          <div className="mx-auto my-8 max-w-4xl">
+          <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-4xl px-4 sm:px-0">
             <Card>
               <CardHeader>
-                <CardTitle className="text-destructive">Error</CardTitle>
-                <CardDescription>Failed to load purchase details</CardDescription>
+                <CardTitle className="text-destructive text-lg sm:text-xl">Error</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Failed to load purchase details</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button onClick={() => router.push("/purchases")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
+                <Button onClick={() => router.push("/purchases")} className="w-full sm:w-auto text-sm sm:text-base">
+                  <ArrowLeft className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Back to Purchases
                 </Button>
               </CardContent>
@@ -172,13 +172,13 @@ Generated on: ${new Date().toLocaleString()}
           title={`Purchase #${purchase.id}`}
           subtitle="Complete purchase details with all items"
           actions={
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={downloadPurchasePDF}>
-                <Download className="mr-2 h-4 w-4" />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" onClick={downloadPurchasePDF} className="w-full sm:w-auto text-sm sm:text-base">
+                <Download className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                 Download
               </Button>
-              <Button variant="outline" onClick={() => router.push("/purchases")}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
+              <Button variant="outline" onClick={() => router.push("/purchases")} className="w-full sm:w-auto text-sm sm:text-base">
+                <ArrowLeft className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                 Back
               </Button>
             </div>
@@ -186,34 +186,34 @@ Generated on: ${new Date().toLocaleString()}
         />
       }
       body={
-        <div className="mx-auto my-8 max-w-5xl space-y-6">
+        <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-5xl space-y-4 sm:space-y-6 px-4 sm:px-0">
           {/* Purchase Header Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                 Purchase Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <CardContent className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Supplier</p>
-                  <p className="font-medium">{purchase.supplier}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Supplier</p>
+                  <p className="font-medium text-sm sm:text-base">{purchase.supplier}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <Hash className="h-4 w-4" />
+                  <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                    <Hash className="h-3 w-3 sm:h-4 sm:w-4" />
                     Invoice Number
                   </p>
-                  <p className="font-medium">{purchase.invoiceNumber || '-'}</p>
+                  <p className="font-medium text-sm sm:text-base">{purchase.invoiceNumber || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
+                  <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                     Purchase Date
                   </p>
-                  <p className="font-medium">
+                  <p className="font-medium text-sm sm:text-base">
                     {new Date(purchase.purchasedDate).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
@@ -222,18 +222,18 @@ Generated on: ${new Date().toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 flex items-center gap-1">
-                    <Building className="h-4 w-4" />
+                  <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                    <Building className="h-3 w-3 sm:h-4 sm:w-4" />
                     Office
                   </p>
-                  <p className="font-medium">{purchase.office.name}</p>
+                  <p className="font-medium text-sm sm:text-base">{purchase.office.name}</p>
                 </div>
               </div>
               
               {purchase.remarks && (
                 <div className="pt-2 border-t">
-                  <p className="text-sm text-gray-500">Remarks</p>
-                  <p className="font-medium mt-1">{purchase.remarks}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Remarks</p>
+                  <p className="font-medium text-sm sm:text-base mt-1">{purchase.remarks}</p>
                 </div>
               )}
             </CardContent>
@@ -242,13 +242,13 @@ Generated on: ${new Date().toLocaleString()}
           {/* Items Table */}
           <Card>
             <CardHeader>
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                 <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5" />
                     Purchased Items
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     {purchase.totalItems} item{purchase.totalItems !== 1 ? 's' : ''} in this purchase
                   </CardDescription>
                 </div>
@@ -256,6 +256,7 @@ Generated on: ${new Date().toLocaleString()}
                   <Button 
                     variant="outline" 
                     size="sm"
+                    className="w-full sm:w-auto text-xs sm:text-sm"
                     onClick={() => {
                       const allInstances: { itemInstanceId: number; barcode: string; itemName: string; }[] = [];
                       purchase.items.forEach((item: any) => {
@@ -273,61 +274,66 @@ Generated on: ${new Date().toLocaleString()}
                       setShowBarcodeDialog(true);
                     }}
                   >
-                    <QrCode className="mr-2 h-4 w-4" />
+                    <QrCode className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Print All Barcodes
                   </Button>
                 )}
               </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-12">#</TableHead>
-                    <TableHead>Item Name</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead className="text-right">Unit Price</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {purchase.items.map((item, index) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>{item.item.name}</TableCell>
-                      <TableCell className="text-right">{item.quantity}</TableCell>
-                      <TableCell className="text-right">৳{item.unitPrice.toFixed(2)}</TableCell>
-                      <TableCell className="text-right font-medium">৳{item.totalPrice.toFixed(2)}</TableCell>
-                      <TableCell className="text-center">
-                        {item.itemInstanceIds && item.itemInstanceIds.length > 0 && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => {
-                              const instances = item.itemInstanceIds!.map((id, idx) => ({
-                                itemInstanceId: id,
-                                barcode: item.itemBarcodes![idx],
-                                itemName: item.item.name
-                              }));
-                              setBarcodeItems(instances);
-                              setShowBarcodeDialog(true);
-                            }}
-                          >
-                            <QrCode className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </TableCell>
+              <div className="overflow-x-auto -mx-3 sm:mx-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-8 sm:w-12 text-xs sm:text-sm">#</TableHead>
+                      <TableHead className="text-xs sm:text-sm whitespace-nowrap">Item Name</TableHead>
+                      <TableHead className="text-right text-xs sm:text-sm whitespace-nowrap">Quantity</TableHead>
+                      <TableHead className="text-right text-xs sm:text-sm whitespace-nowrap hidden sm:table-cell">Unit Price</TableHead>
+                      <TableHead className="text-right text-xs sm:text-sm whitespace-nowrap">Total</TableHead>
+                      <TableHead className="text-center text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Actions</TableHead>
                     </TableRow>
-                  ))}
-                  <TableRow className="bg-blue-50 dark:bg-blue-950 font-semibold">
-                    <TableCell colSpan={5} className="text-right">Grand Total</TableCell>
-                    <TableCell className="text-right text-lg text-blue-600">
-                      ৳{purchase.totalAmount.toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {purchase.items.map((item, index) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium text-xs sm:text-sm">{index + 1}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{item.item.name}</TableCell>
+                        <TableCell className="text-right text-xs sm:text-sm">{item.quantity}</TableCell>
+                        <TableCell className="text-right text-xs sm:text-sm hidden sm:table-cell">৳{item.unitPrice.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-medium text-xs sm:text-sm whitespace-nowrap">৳{item.totalPrice.toFixed(2)}</TableCell>
+                        <TableCell className="text-center hidden md:table-cell">
+                          {item.itemInstanceIds && item.itemInstanceIds.length > 0 && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                const instances = item.itemInstanceIds!.map((id, idx) => ({
+                                  itemInstanceId: id,
+                                  barcode: item.itemBarcodes![idx],
+                                  itemName: item.item.name
+                                }));
+                                setBarcodeItems(instances);
+                                setShowBarcodeDialog(true);
+                              }}
+                            >
+                              <QrCode className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    <TableRow className="bg-blue-50 dark:bg-blue-950 font-semibold">
+                      <TableCell colSpan={3} className="text-right text-xs sm:text-sm sm:hidden">Grand Total</TableCell>
+                      <TableCell colSpan={4} className="text-right text-xs sm:text-sm hidden sm:table-cell md:hidden">Grand Total</TableCell>
+                      <TableCell colSpan={5} className="text-right text-xs sm:text-sm hidden md:table-cell">Grand Total</TableCell>
+                      <TableCell className="text-right text-base sm:text-lg text-blue-600 whitespace-nowrap font-bold">
+                        ৳{purchase.totalAmount.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell"></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
 
@@ -335,37 +341,38 @@ Generated on: ${new Date().toLocaleString()}
           {purchase.receiptUrl && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ReceiptIcon className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                  <ReceiptIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                   Receipt / Invoice Document
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {purchase.receiptUrl.toLowerCase().endsWith('.pdf') ? (
                     <div className="space-y-3">
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-12 w-12 text-blue-600" />
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900">PDF Receipt</p>
-                            <p className="text-sm text-gray-500">Click to view the receipt document</p>
+                      <div className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-blue-600 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 text-sm sm:text-base">PDF Receipt</p>
+                            <p className="text-xs sm:text-sm text-gray-500">Click to view the receipt document</p>
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Button 
                           onClick={() => window.open(purchase.receiptUrl, '_blank')}
-                          className="flex-1"
+                          className="flex-1 text-sm sm:text-base"
                         >
-                          <ExternalLink className="mr-2 h-4 w-4" />
+                          <ExternalLink className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                           Open PDF
                         </Button>
                         <Button 
                           variant="outline"
                           onClick={handleDownloadReceipt}
+                          className="w-full sm:w-auto text-sm sm:text-base"
                         >
-                          <Download className="mr-2 h-4 w-4" />
+                          <Download className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                           Download
                         </Button>
                       </div>
@@ -381,20 +388,21 @@ Generated on: ${new Date().toLocaleString()}
                           style={{ cursor: 'pointer' }}
                         />
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <Button 
                           variant="outline"
                           onClick={() => window.open(purchase.receiptUrl, '_blank')}
-                          className="flex-1"
+                          className="flex-1 text-sm sm:text-base"
                         >
-                          <ExternalLink className="mr-2 h-4 w-4" />
+                          <ExternalLink className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                           View Full Size
                         </Button>
                         <Button 
                           variant="outline"
                           onClick={handleDownloadReceipt}
+                          className="w-full sm:w-auto text-sm sm:text-base"
                         >
-                          <Download className="mr-2 h-4 w-4" />
+                          <Download className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                           Download
                         </Button>
                       </div>
@@ -408,17 +416,17 @@ Generated on: ${new Date().toLocaleString()}
           {/* Purchaser Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
                 Purchaser Information
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div>
-                <p className="text-sm text-gray-500">Purchased By</p>
+                <p className="text-xs sm:text-sm text-gray-500">Purchased By</p>
                 <Link 
                   href={`/profile/${purchase.purchasedBy.id}`}
-                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline text-lg"
+                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline text-base sm:text-lg"
                 >
                   {purchase.purchasedBy.name || purchase.purchasedBy.username}
                 </Link>

@@ -37,7 +37,7 @@ export function SearchGroup<T = any>({
         <input 
             type="text" 
             placeholder={config.placeholder || "Search..."}
-            className={config.className || "border rounded px-2 py-1"}
+            className={config.className || "border rounded px-3 py-2 w-full sm:w-64 text-sm sm:text-base placeholder:text-xs sm:placeholder:text-sm"}
             onChange={(e) => setSearchQuery(e.target.value)}
         />
     );

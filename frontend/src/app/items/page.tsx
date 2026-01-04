@@ -44,20 +44,20 @@ const paginationConfig = {
 const Actions = () => {
   const router = useRouter();
   return (
-    <Button onClick={() => router.push("/items/new")}>
+    <Button onClick={() => router.push("/items/new")} className="w-full sm:w-auto text-sm sm:text-base">
       Create Item
     </Button>
   );
 };
 
 const RowActions = ({ item, onView, onEdit }: { item: Item, onView: (item: any) => void, onEdit: (item: any) => void }) => (
-  <div className="flex gap-2">
+  <div className="flex gap-2 sm:gap-3">
     <Eye
-      className="w-5 h-5 cursor-pointer hover:text-blue-600"
+      className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-blue-600 transition-colors"
       onClick={() => onView(item)}
     />
     <Pencil
-      className="w-5 h-5 cursor-pointer hover:text-green-600"
+      className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-green-600 transition-colors"
       onClick={() => onEdit(item)}
     />
   </div>
@@ -66,51 +66,63 @@ const RowActions = ({ item, onView, onEdit }: { item: Item, onView: (item: any) 
 function Body({ data }: { data: Item[] }){
   const { handleView, handleEdit } = useTableActions("/items");
 
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="text-center">
+          <p className="text-gray-500 text-sm sm:text-base">No items found</p>
+        </div>
+      </div>
+    );
+  }
+
   return(
     <>
-    <div className="mx-auto my-8 max-w-7xl">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Unit</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item) => (
-          <TableRow key={item.id}>
-            <TableCell className="font-medium">{item.name}</TableCell>
-            <TableCell>
-              {item.category ? (
-                <Badge variant="outline">{item.category.name}</Badge>
-              ) : (
-                <span className="text-gray-400">-</span>
-              )}
-            </TableCell>
-            <TableCell>
-              {item.unit ? (
-                <Badge variant="secondary">{item.unit.name}</Badge>
-              ) : (
-                <span className="text-gray-400">-</span>
-              )}
-            </TableCell>
-            <TableCell className="max-w-xs truncate">
-              {item.description || '-'}
-            </TableCell>
-            <TableCell>
-              <RowActions
-                item={item}
-                onView={handleView}
-                onEdit={handleEdit}
-              />
-            </TableCell>
-          </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-7xl">
+      <div className="overflow-x-auto -mx-3 sm:mx-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Name</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Category</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Unit</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden xl:table-cell">Description</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell className="text-xs sm:text-sm font-medium">{item.name}</TableCell>
+              <TableCell className="text-xs sm:text-sm hidden md:table-cell">
+                {item.category ? (
+                  <Badge variant="outline" className="text-xs">{item.category.name}</Badge>
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm hidden lg:table-cell">
+                {item.unit ? (
+                  <Badge variant="secondary" className="text-xs">{item.unit.name}</Badge>
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
+              </TableCell>
+              <TableCell className="text-xs sm:text-sm max-w-xs truncate hidden xl:table-cell">
+                {item.description || '-'}
+              </TableCell>
+              <TableCell>
+                <RowActions
+                  item={item}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                />
+              </TableCell>
+            </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
     </>
   )
@@ -135,11 +147,11 @@ export default function ItemsPage() {
       <PageLayout
         header={<Header title="Items" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle>Authentication Required</CardTitle>
-                <CardDescription>Please log in to view items</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Authentication Required</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Please log in to view items</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -166,7 +178,7 @@ export default function ItemsPage() {
     return (
       <PageLayout
         header={<Header title="Items" subtitle="Loading items..." />}
-        body={<div className="flex justify-center items-center h-64">Loading...</div>}
+        body={<div className="flex justify-center items-center h-48 sm:h-64 text-sm sm:text-base">Loading...</div>}
       />
     );
   }
@@ -175,7 +187,7 @@ export default function ItemsPage() {
     return (
       <PageLayout
         header={<Header title="Items" subtitle="Error loading items" />}
-        body={<div className="flex justify-center items-center h-64 text-red-600">Error loading items</div>}
+        body={<div className="flex justify-center items-center h-48 sm:h-64 text-red-600 text-sm sm:text-base">Error loading items</div>}
       />
     );
   }

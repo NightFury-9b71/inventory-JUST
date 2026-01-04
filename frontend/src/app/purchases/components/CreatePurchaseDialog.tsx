@@ -225,7 +225,7 @@ export function CreatePurchaseDialog({
                         accept="image/*,application/pdf"
                         onChange={handleReceiptUpload}
                         disabled={uploadingReceipt}
-                        className="cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        className="cursor-pointer file:mr-2 sm:file:mr-4 file:py-1.5 sm:file:py-2 file:px-3 sm:file:px-4 file:rounded-md file:border-0 file:text-xs sm:file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 text-xs sm:text-sm"
                       />
                       {uploadingReceipt && (
                         <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-md">
@@ -242,15 +242,15 @@ export function CreatePurchaseDialog({
                   </div>
                 ) : (
                   <div className="border rounded-lg p-3 bg-gray-50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                         {receiptFile && receiptFile.type.startsWith('image/') ? (
-                          <ImageIcon className="h-10 w-10 text-green-600" />
+                          <ImageIcon className="h-8 w-8 sm:h-10 sm:w-10 text-green-600 flex-shrink-0" />
                         ) : (
-                          <FileText className="h-10 w-10 text-blue-600" />
+                          <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-blue-600 flex-shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                             {receiptFile?.name || 'Receipt uploaded'}
                           </p>
                           <p className="text-xs text-gray-500">

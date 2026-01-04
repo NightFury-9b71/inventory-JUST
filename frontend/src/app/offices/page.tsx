@@ -68,20 +68,20 @@ const paginationConfig = {
 const Actions = () => {
   const router = useRouter();
   return (
-    <Button onClick={() => router.push("/offices/new")}>
+    <Button onClick={() => router.push("/offices/new")} className="w-full sm:w-auto text-sm sm:text-base">
       Create Office
     </Button>
   );
 };
 
 const RowActions = ({ item, onView, onEdit }: { item: Office, onView: (item: any) => void, onEdit: (item: any) => void }) => (
-  <div className="flex gap-2">
+  <div className="flex gap-2 sm:gap-3">
     <Eye
-      className="w-5 h-5 cursor-pointer hover:text-blue-600"
+      className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-blue-600 transition-colors"
       onClick={() => onView(item)}
     />
     <Pencil
-      className="w-5 h-5 cursor-pointer hover:text-green-600"
+      className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-green-600 transition-colors"
       onClick={() => onEdit(item)}
     />
   </div>
@@ -90,39 +90,51 @@ const RowActions = ({ item, onView, onEdit }: { item: Office, onView: (item: any
 function Body({ data }: { data: Office[] }){
   const { handleView, handleEdit } = useTableActions("/offices");
 
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <div className="text-center">
+          <p className="text-gray-500 text-sm sm:text-base">No child offices found</p>
+        </div>
+      </div>
+    );
+  }
+
   return(
     <>
-    <div className="mx-auto my-8 max-w-7xl">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Bengali Name</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Code</TableHead>
-            <TableHead>Order</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item) => (
-          <TableRow key={item.id}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>{item.nameBn || '-'}</TableCell>
-            <TableCell className="capitalize">{item.type}</TableCell>
-            <TableCell>{item.code || '-'}</TableCell>
-            <TableCell>{item.order || '-'}</TableCell>
-            <TableCell>
-              <RowActions
-                item={item}
-                onView={handleView}
-                onEdit={handleEdit}
-              />
-            </TableCell>
-          </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="mx-auto my-4 sm:my-6 md:my-8 max-w-7xl">
+      <div className="overflow-x-auto -mx-3 sm:mx-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Name</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">Bengali Name</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Type</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden lg:table-cell">Code</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap hidden xl:table-cell">Order</TableHead>
+              <TableHead className="text-xs sm:text-sm whitespace-nowrap">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell className="text-xs sm:text-sm font-medium">{item.name}</TableCell>
+              <TableCell className="text-xs sm:text-sm hidden md:table-cell">{item.nameBn || '-'}</TableCell>
+              <TableCell className="text-xs sm:text-sm capitalize">{item.type}</TableCell>
+              <TableCell className="text-xs sm:text-sm hidden lg:table-cell">{item.code || '-'}</TableCell>
+              <TableCell className="text-xs sm:text-sm hidden xl:table-cell">{item.order || '-'}</TableCell>
+              <TableCell>
+                <RowActions
+                  item={item}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                />
+              </TableCell>
+            </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
     </>
   )
@@ -144,11 +156,11 @@ export default function OfficesPage() {
       <PageLayout
         header={<Header title="Offices" subtitle="" />}
         body={
-          <div className="flex items-center justify-center h-[50vh]">
-            <Card className="w-96">
+          <div className="flex items-center justify-center min-h-[50vh] px-4">
+            <Card className="w-full max-w-md">
               <CardHeader>
-                <CardTitle>Authentication Required</CardTitle>
-                <CardDescription>Please log in to view offices</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Authentication Required</CardTitle>
+                <CardDescription className="text-sm sm:text-base">Please log in to view offices</CardDescription>
               </CardHeader>
             </Card>
           </div>
@@ -161,7 +173,7 @@ export default function OfficesPage() {
     return (
       <PageLayout
         header={<Header title="Offices" subtitle="Loading offices..." />}
-        body={<div className="flex justify-center items-center h-64">Loading...</div>}
+        body={<div className="flex justify-center items-center h-48 sm:h-64 text-sm sm:text-base">Loading...</div>}
       />
     );
   }
@@ -170,7 +182,7 @@ export default function OfficesPage() {
     return (
       <PageLayout
         header={<Header title="Offices" subtitle="Error loading offices" />}
-        body={<div className="flex justify-center items-center h-64 text-red-600">Error loading offices</div>}
+        body={<div className="flex justify-center items-center h-48 sm:h-64 text-red-600 text-sm sm:text-base">Error loading offices</div>}
       />
     );
   }

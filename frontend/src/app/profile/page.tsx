@@ -11,12 +11,14 @@ import { User, Mail, Building2, Shield, Edit, Key } from "lucide-react";
 import { EditProfileDialog } from "./components/EditProfileDialog";
 import { ChangePasswordDialog } from "./components/ChangePasswordDialog";
 import { useUser } from "@/services/userService";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ProfilePage() {
   const { user: currentUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
+  const isMobile = useIsMobile();
 
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
@@ -58,27 +60,27 @@ export default function ProfilePage() {
       header={
         <Header 
           title={isOwnProfile ? "My Profile" : `${user?.fullName || user?.name || user?.username}'s Profile`}
-          subtitle={isOwnProfile ? "Manage your account information" : "View user information"}
+          subtitle={isMobile ? "" : (isOwnProfile ? "Manage your account information" : "View user information")}
         />
       }
       body={
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
           {/* Profile Overview Card */}
           <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
+            <CardHeader className="space-y-4">
+              <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center justify-between'}`}>
                 <div className="flex items-center space-x-4">
-                  <div className="h-16 w-16 rounded-full bg-indigo-600 flex items-center justify-center text-white text-2xl font-semibold">
+                  <div className={`${isMobile ? 'h-14 w-14 text-xl' : 'h-16 w-16 text-2xl'} rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold`}>
                     {(user.fullName || user.name)?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || 
                      user.username?.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <CardTitle className="text-2xl">{user.fullName || user.name || user.username}</CardTitle>
-                    <CardDescription>@{user.username}</CardDescription>
+                    <CardTitle className={isMobile ? 'text-xl' : 'text-2xl'}>{user.fullName || user.name || user.username}</CardTitle>
+                    <CardDescription className={isMobile ? 'text-xs' : ''}>@{user.username}</CardDescription>
                   </div>
                 </div>
                 {isOwnProfile && (
-                  <Button onClick={() => setShowEditDialog(true)} variant="outline">
+                  <Button onClick={() => setShowEditDialog(true)} variant="outline" size={isMobile ? 'sm' : 'default'} className={isMobile ? 'w-full' : ''}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit Profile
                   </Button>
@@ -86,98 +88,98 @@ export default function ProfilePage() {
               </div>
             </CardHeader>
             <Separator />
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className={isMobile ? 'pt-4' : 'pt-6'}>
+              <div className={`grid grid-cols-1 md:grid-cols-2 ${isMobile ? 'gap-4' : 'gap-6'}`}>
                 {/* Email */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
+                <div className="space-y-1.5">
+                  <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
                     <Mail className="h-4 w-4 mr-2" />
                     Email Address
                   </div>
-                  <p className="text-base font-medium">{user.email || "Not provided"}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium break-all`}>{user.email || "Not provided"}</p>
                 </div>
 
                 {/* Office */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
+                <div className="space-y-1.5">
+                  <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
                     <Building2 className="h-4 w-4 mr-2" />
                     Office
                   </div>
-                  <p className="text-base font-medium">{user.officeName || "Not assigned"}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>{user.officeName || "Not assigned"}</p>
                 </div>
 
                 {/* Role */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
+                <div className="space-y-1.5">
+                  <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
                     <Shield className="h-4 w-4 mr-2" />
                     Role
                   </div>
                   <div>
-                    <Badge variant={user.role === "ADMIN" ? "default" : "secondary"}>
+                    <Badge variant={user.role === "ADMIN" ? "default" : "secondary"} className={isMobile ? 'text-xs' : ''}>
                       {user.role}
                     </Badge>
                   </div>
                 </div>
 
                 {/* User ID */}
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
+                <div className="space-y-1.5">
+                  <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>
                     <User className="h-4 w-4 mr-2" />
                     User ID
                   </div>
-                  <p className="text-base font-medium">#{user.id}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>#{user.id}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Security Settings Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your account security</CardDescription>
-            </CardHeader>
-            <Separator />
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-medium">Password</h3>
-                    <p className="text-sm text-gray-500">Change your password to keep your account secure</p>
-                  </div>
-                  {isOwnProfile && (
-                    <Button onClick={() => setShowPasswordDialog(true)} variant="outline">
+          {isOwnProfile && (
+            <Card>
+              <CardHeader>
+                <CardTitle className={isMobile ? 'text-lg' : ''}>Security Settings</CardTitle>
+                <CardDescription className={isMobile ? 'text-xs' : ''}>Manage your account security</CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className={isMobile ? 'pt-4' : 'pt-6'}>
+                <div className="space-y-4">
+                  <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'items-center justify-between'}`}>
+                    <div>
+                      <h3 className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium`}>Password</h3>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Change your password to keep your account secure</p>
+                    </div>
+                    <Button onClick={() => setShowPasswordDialog(true)} variant="outline" size={isMobile ? 'sm' : 'default'} className={isMobile ? 'w-full' : ''}>
                       <Key className="h-4 w-4 mr-2" />
                       Change Password
                     </Button>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Account Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>Additional details about your account</CardDescription>
+              <CardTitle className={isMobile ? 'text-lg' : ''}>Account Information</CardTitle>
+              <CardDescription className={isMobile ? 'text-xs' : ''}>Additional details about your account</CardDescription>
             </CardHeader>
             <Separator />
-            <CardContent className="pt-6">
-              <div className="space-y-4">
+            <CardContent className={isMobile ? 'pt-4' : 'pt-6'}>
+              <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Username</span>
-                  <span className="text-sm font-medium">{user.username}</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Username</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{user.username}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Office ID</span>
-                  <span className="text-sm font-medium">{user.officeId || "N/A"}</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Office ID</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{user.officeId || "N/A"}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500">Account Type</span>
-                  <Badge variant="outline">{user.role}</Badge>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Account Type</span>
+                  <Badge variant="outline" className={isMobile ? 'text-xs' : ''}>{user.role}</Badge>
                 </div>
               </div>
             </CardContent>

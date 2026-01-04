@@ -10,9 +10,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, X, FileX, PackageCheck, ClipboardCheck } from "lucide-react";
 import { ItemRequest } from "@/services/itemRequestService";
 import { getStatusColor, formatStatus } from "../utils/statusUtils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface RequisitionsTableProps {
   data: ItemRequest[];
@@ -40,6 +42,22 @@ function LoadingRow() {
   );
 }
 
+function MobileLoadingCard() {
+  return (
+    <Card className="mb-3">
+      <CardHeader className="pb-3">
+        <Skeleton className="h-5 w-32 mb-2" />
+        <Skeleton className="h-4 w-24" />
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-8 w-20" />
+      </CardContent>
+    </Card>
+  );
+}
+
 function EmptyState({ activeTab }: { activeTab: 'my-requests' | 'incoming' | 'approved' | 'fulfilled' | 'history' }) {
   const messages = {
     'my-requests': "No requisitions found. Create a new requisition to request items from other offices.",
@@ -50,14 +68,141 @@ function EmptyState({ activeTab }: { activeTab: 'my-requests' | 'incoming' | 'ap
   };
 
   return (
-    <TableRow>
-      <TableCell colSpan={8} className="h-64">
-        <div className="flex flex-col items-center justify-center text-center space-y-3">
-          <FileX className="h-12 w-12 text-gray-400" />
-          <p className="text-sm text-gray-500 max-w-md">{messages[activeTab]}</p>
+    <div className="flex flex-col items-center justify-center text-center space-y-3 py-12 px-4">
+      <FileX className="h-12 w-12 text-gray-400" />
+      <p className="text-sm text-gray-500 max-w-md">{messages[activeTab]}</p>
+    </div>
+  );
+}
+
+function MobileRequisitionCard({ 
+  request, 
+  activeTab,
+  isAdmin,
+  onApprove, 
+  onReject, 
+  onFulfill, 
+  onConfirm 
+}: { 
+  request: ItemRequest;
+  activeTab: 'my-requests' | 'incoming' | 'approved' | 'fulfilled' | 'history';
+  isAdmin: boolean;
+  onApprove: (request: ItemRequest) => void;
+  onReject: (request: ItemRequest) => void;
+  onFulfill: (request: ItemRequest) => void;
+  onConfirm: (request: ItemRequest) => void;
+}) {
+  const showApproveRejectActions = isAdmin && activeTab === 'incoming' && request.status === 'PENDING';
+  const showFulfillAction = isAdmin && activeTab === 'approved' && 
+    (request.status === 'APPROVED' || request.status === 'PARTIALLY_FULFILLED');
+  const showConfirmAction = isAdmin && activeTab === 'fulfilled' && 
+    (request.status === 'FULFILLED' || request.status === 'PARTIALLY_FULFILLED');
+
+  return (
+    <Card className="mb-3">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-base font-semibold">
+              {request.item.name}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">ID: {request.id}</p>
+          </div>
+          <Badge className={getStatusColor(request.status)}>
+            {formatStatus(request.status)}
+          </Badge>
         </div>
-      </TableCell>
-    </TableRow>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          {activeTab === 'history' ? (
+            <>
+              <div>
+                <p className="text-xs text-muted-foreground">From</p>
+                <p className="font-medium">{request.parentOffice.name}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">To</p>
+                <p className="font-medium">{request.requestingOffice.name}</p>
+              </div>
+            </>
+          ) : activeTab === 'my-requests' || activeTab === 'approved' || activeTab === 'fulfilled' ? (
+            <div>
+              <p className="text-xs text-muted-foreground">Requested To</p>
+              <p className="font-medium">{request.parentOffice.name}</p>
+            </div>
+          ) : (
+            <div>
+              <p className="text-xs text-muted-foreground">Requested By</p>
+              <p className="font-medium">{request.requestingOffice.name}</p>
+            </div>
+          )}
+          <div>
+            <p className="text-xs text-muted-foreground">Quantity</p>
+            <p className="font-medium">{request.requestedQuantity}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Approved</p>
+            <p className="font-medium">{request.approvedQuantity ?? '-'}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Date</p>
+            <p className="font-medium">
+              {new Date(request.requestedDate).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+
+        {(showApproveRejectActions || showFulfillAction || showConfirmAction) && (
+          <div className="flex flex-col gap-2 pt-2 border-t">
+            {showApproveRejectActions && (
+              <div className="flex gap-2">
+                <Button 
+                  size="sm"
+                  variant="default"
+                  onClick={() => onApprove(request)}
+                  className="flex-1 flex items-center justify-center gap-1"
+                >
+                  <Check className="h-4 w-4" />
+                  Approve
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={() => onReject(request)}
+                  className="flex-1 flex items-center justify-center gap-1"
+                >
+                  <X className="h-4 w-4" />
+                  Reject
+                </Button>
+              </div>
+            )}
+            {showFulfillAction && (
+              <Button 
+                size="sm"
+                variant="default"
+                onClick={() => onFulfill(request)}
+                className="w-full flex items-center justify-center gap-1"
+              >
+                <PackageCheck className="h-4 w-4" />
+                Fulfill
+              </Button>
+            )}
+            {showConfirmAction && (
+              <Button 
+                size="sm"
+                variant="default"
+                onClick={() => onConfirm(request)}
+                className="w-full flex items-center justify-center gap-1"
+              >
+                <ClipboardCheck className="h-4 w-4" />
+                Confirm Receipt
+              </Button>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -71,6 +216,8 @@ export function RequisitionsTable({
   onFulfill,
   onConfirm,
 }: RequisitionsTableProps) {
+  const isMobile = useIsMobile();
+  
   const showApproveRejectActions = (request: ItemRequest) => {
     return isAdmin && activeTab === 'incoming' && request.status === 'PENDING';
   };
@@ -84,6 +231,42 @@ export function RequisitionsTable({
     return isAdmin && activeTab === 'fulfilled' && (request.status === 'FULFILLED' || request.status === 'PARTIALLY_FULFILLED');
   };
 
+  // Mobile view
+  if (isMobile) {
+    return (
+      <div className="space-y-2">
+        {isLoading ? (
+          <>
+            <MobileLoadingCard />
+            <MobileLoadingCard />
+            <MobileLoadingCard />
+          </>
+        ) : data.length === 0 ? (
+          <EmptyState activeTab={activeTab} />
+        ) : (
+          <>
+            {data.map((request) => (
+              <MobileRequisitionCard
+                key={request.id}
+                request={request}
+                activeTab={activeTab}
+                isAdmin={isAdmin}
+                onApprove={onApprove}
+                onReject={onReject}
+                onFulfill={onFulfill}
+                onConfirm={onConfirm}
+              />
+            ))}
+            <div className="text-center text-sm text-muted-foreground py-2">
+              Total: {data.length} requisition{data.length !== 1 ? 's' : ''}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop view
   return (
     <Table>
       <TableCaption>
@@ -118,7 +301,11 @@ export function RequisitionsTable({
             <LoadingRow />
           </>
         ) : data.length === 0 ? (
-          <EmptyState activeTab={activeTab} />
+          <TableRow>
+            <TableCell colSpan={8} className="h-64">
+              <EmptyState activeTab={activeTab} />
+            </TableCell>
+          </TableRow>
         ) : (
           data.map((request) => (
             <TableRow key={request.id}>
