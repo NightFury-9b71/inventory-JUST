@@ -97,6 +97,16 @@ export const generateESCPOS = async (itemInstanceId: number): Promise<Blob> => {
 };
 
 /**
+ * Generate ESC/POS commands for multiple labels
+ */
+export const generateESCPOSMultiple = async (itemInstanceIds: number[]): Promise<Blob> => {
+  const response = await api.post(`/barcodes/escpos-multiple`, itemInstanceIds, {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
+/**
  * Download a barcode label
  */
 export const downloadBarcodeLabel = async (itemInstanceId: number, filename?: string) => {
@@ -248,36 +258,33 @@ export const printSimpleBarcodeLabels = async (itemInstanceIds: number[]) => {
 };
 
 /**
- * Print barcode labels PDF directly to XPrinter thermal printer via Web Serial API
+ * Print barcode labels directly to XPrinter thermal printer via network (Ethernet)
+ * Default IP is 192.168.1.100, but can be configured
  */
-export const printBarcodeLabelsPDF = async (itemInstanceIds: number[]) => {
+export const printBarcodeLabelsPDF = async (
+  itemInstanceIds: number[], 
+  printerIP: string = '192.168.1.100',
+  printerPort: number = 9100
+) => {
   try {
-    // Check if Web Serial API is supported
-    if (!('serial' in navigator)) {
-      throw new Error('Web Serial API is not supported in this browser. Use Chrome or Edge.');
-    }
-
-    // Request a port
-    const port = await (navigator as any).serial.requestPort();
-    await port.open({ baudRate: 9600 });
-
-    // Get PDF data
-    const blob = await generateBarcodeLabelsPDF(itemInstanceIds);
+    // Get ESC/POS commands (proper format for thermal printers)
+    const blob = await generateESCPOSMultiple(itemInstanceIds);
     const arrayBuffer = await blob.arrayBuffer();
-    const data = new Uint8Array(arrayBuffer);
+    
+    // Send to backend API which will forward to network printer
+    const response = await api.post('/barcodes/print-network', {
+      printerIP,
+      printerPort,
+      data: Array.from(new Uint8Array(arrayBuffer))
+    });
 
-    // Write to printer
-    const writer = port.writable.getWriter();
-    await writer.write(data);
-    writer.releaseLock();
-
-    // Close the port
-    await port.close();
-
-    return { success: true, message: `Printed ${itemInstanceIds.length} label(s) successfully to XPrinter` };
+    return { 
+      success: true, 
+      message: `Printed ${itemInstanceIds.length} label(s) successfully to XPrinter at ${printerIP}` 
+    };
   } catch (error: any) {
-    console.error('Thermal printer error:', error);
-    throw new Error(error.message || 'Failed to print to XPrinter');
+    console.error('Network printer error:', error);
+    throw new Error(error.response?.data?.message || error.message || 'Failed to print to XPrinter');
   }
 };
 

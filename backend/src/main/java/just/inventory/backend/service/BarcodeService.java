@@ -350,6 +350,21 @@ public class BarcodeService {
     }
 
     /**
+     * Generate ESC/POS commands for multiple labels
+     * Suitable for XPrinter and similar thermal printers
+     */
+    public byte[] generateESCPOSCommandsMultiple(java.util.List<Long> itemInstanceIds) throws WriterException, IOException {
+        ByteArrayOutputStream escpos = new ByteArrayOutputStream();
+        
+        for (Long itemInstanceId : itemInstanceIds) {
+            byte[] labelCommands = generateESCPOSCommands(itemInstanceId);
+            escpos.write(labelCommands);
+        }
+        
+        return escpos.toByteArray();
+    }
+
+    /**
      * Helper method to generate QR code as BufferedImage
      */
     private BufferedImage generateQRCodeImage(String text, int width, int height) throws WriterException {

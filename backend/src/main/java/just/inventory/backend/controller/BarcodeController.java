@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/barcodes")
@@ -153,6 +156,68 @@ public class BarcodeController {
             return new ResponseEntity<>(escposCommands, headers, HttpStatus.OK);
         } catch (WriterException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/escpos-multiple")
+    @Operation(summary = "Generate ESC/POS commands for multiple labels", description = "Generate ESC/POS commands for printing multiple barcode labels")
+    public ResponseEntity<byte[]> generateESCPOSMultiple(@RequestBody List<Long> itemInstanceIds) {
+        try {
+            byte[] escposCommands = barcodeService.generateESCPOSCommandsMultiple(itemInstanceIds);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "print-labels.bin");
+            
+            return new ResponseEntity<>(escposCommands, headers, HttpStatus.OK);
+        } catch (WriterException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/print-network")
+    @Operation(summary = "Print to network printer", description = "Send print data directly to a network-connected thermal printer via raw socket")
+    public ResponseEntity<Map<String, Object>> printToNetworkPrinter(@RequestBody Map<String, Object> request) {
+        try {
+            String printerIP = (String) request.get("printerIP");
+            Integer printerPort = (Integer) request.get("printerPort");
+            @SuppressWarnings("unchecked")
+            List<Integer> dataList = (List<Integer>) request.get("data");
+            
+            if (printerIP == null || printerPort == null || dataList == null) {
+                return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Missing required parameters: printerIP, printerPort, or data"
+                ));
+            }
+
+            // Convert List<Integer> to byte[]
+            byte[] data = new byte[dataList.size()];
+            for (int i = 0; i < dataList.size(); i++) {
+                data[i] = dataList.get(i).byteValue();
+            }
+
+            // Send data to network printer via raw socket
+            try (Socket socket = new Socket(printerIP, printerPort);
+                 OutputStream out = socket.getOutputStream()) {
+                out.write(data);
+                out.flush();
+            }
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Print job sent successfully to " + printerIP + ":" + printerPort
+            ));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "success", false,
+                "message", "Failed to send print job: " + e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "success", false,
+                "message", "Invalid request: " + e.getMessage()
+            ));
         }
     }
 }

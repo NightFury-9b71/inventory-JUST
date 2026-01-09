@@ -12,12 +12,14 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   downloadBarcodeLabelsPDF,
   printBarcodeLabelsPDF,
   generateBarcodeLabelsPDF,
 } from '@/services/barcodeService';
-import { Printer, Download, CheckCircle2, FileText } from 'lucide-react';
+import { Printer, Download, CheckCircle2, FileText, Network } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface BarcodeItem {
@@ -36,6 +38,14 @@ interface BarcodePrintDialogProps {
 export function BarcodePrintDialog({ open, onOpenChange, items, title }: BarcodePrintDialogProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [printerIP, setPrinterIP] = useState(() => {
+    // Load saved printer IP from localStorage
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('xprinter-ip') || '192.168.1.100';
+    }
+    return '192.168.1.100';
+  });
+  const [printerPort, setPrinterPort] = useState(9100);
 
   const handleDownloadPDF = async () => {
     setIsProcessing(true);
@@ -56,8 +66,13 @@ export function BarcodePrintDialog({ open, onOpenChange, items, title }: Barcode
     setIsProcessing(true);
     setMessage(null);
     try {
+      // Save printer IP to localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('xprinter-ip', printerIP);
+      }
+      
       const ids = items.map(item => item.itemInstanceId);
-      const result = await printBarcodeLabelsPDF(ids);
+      const result = await printBarcodeLabelsPDF(ids, printerIP, printerPort);
       toast.success(result.message);
     } catch (error: any) {
       toast.error(`Failed to print to XPrinter: ${error.message}`);
@@ -78,10 +93,13 @@ export function BarcodePrintDialog({ open, onOpenChange, items, title }: Barcode
       if (printWindow) {
         printWindow.onload = () => {
           printWindow.print();
-          setTimeout(() => {
+          
+          // Listen for when the print dialog is closed
+          // Don't auto-close, let the user close manually or after printing
+          printWindow.onafterprint = () => {
             printWindow.close();
             window.URL.revokeObjectURL(url);
-          }, 1000);
+          };
         };
       } else {
         toast.error('Failed to open print dialog. Please allow popups.');
@@ -128,17 +146,45 @@ export function BarcodePrintDialog({ open, onOpenChange, items, title }: Barcode
             </Alert>
           )}
 
+          {/* Printer Configuration */}
+          <div className="space-y-2 border rounded-lg p-4 bg-secondary/50">
+            <h3 className="font-semibold text-sm">Network Printer Settings</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="printer-ip" className="text-xs">Printer IP Address</Label>
+                <Input
+                  id="printer-ip"
+                  value={printerIP}
+                  onChange={(e) => setPrinterIP(e.target.value)}
+                  placeholder="192.168.1.100"
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="printer-port" className="text-xs">Port</Label>
+                <Input
+                  id="printer-port"
+                  type="number"
+                  value={printerPort}
+                  onChange={(e) => setPrinterPort(parseInt(e.target.value))}
+                  placeholder="9100"
+                  className="h-8 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Printing Options */}
           <div className="space-y-3">
             <div className="grid grid-cols-1 gap-3">
-              {/* Print to XPrinter - Primary Option */}
+              {/* Print to XPrinter via Network - Primary Option */}
               <Button
                 onClick={handlePrintPDF}
                 disabled={isProcessing}
                 className="w-full justify-start"
                 variant="default"
               >
-                <Printer className="mr-2 h-4 w-4" />
+                <Network className="mr-2 h-4 w-4" />
                 Print to XPrinter
               </Button>
 
@@ -168,7 +214,7 @@ export function BarcodePrintDialog({ open, onOpenChange, items, title }: Barcode
 
           {/* Help Text */}
           <div className="text-xs text-muted-foreground space-y-1 border-t pt-3">
-            <p><strong>Print to XPrinter:</strong> Send directly to XPrinter thermal printer via USB (requires Chrome/Edge and user permission).</p>
+            <p><strong>Print to XPrinter:</strong> Send directly to ethernet-connected XPrinter at the specified IP address.</p>
             <p><strong>Print PDF (System Dialog):</strong> Opens system print dialog for any printer.</p>
             <p><strong>Download PDF:</strong> Download the PDF file for later printing or sharing.</p>
           </div>
