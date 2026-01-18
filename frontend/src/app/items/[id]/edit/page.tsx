@@ -86,15 +86,6 @@ export default function EditItemPage({ params }: EditItemPageProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isAuthenticated) {
-    return (
-      <PageLayout
-        header={<Header title="Edit Item" subtitle="Loading..." />}
-        body={<div className="flex justify-center items-center h-64">Loading...</div>}
-      />
-    );
-  }
-
   if (isLoading || !item) {
     return (
       <PageLayout

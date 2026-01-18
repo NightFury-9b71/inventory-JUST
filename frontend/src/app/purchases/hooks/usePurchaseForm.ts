@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   CreatePurchaseRequest,
   useCreatePurchase,
+  Purchase,
 } from "@/services/purchaseService";
 
 export interface PurchaseItemLine {
@@ -66,7 +67,7 @@ export function usePurchaseForm() {
     setReceiptFile(null);
   };
 
-  const createPurchase = async (): Promise<boolean> => {
+  const createPurchase = async (): Promise<Purchase> => {
     if (!validateForm()) {
       throw new Error("Please fill in all required fields and add at least one item");
     }
@@ -85,9 +86,9 @@ export function usePurchaseForm() {
         })),
       };
 
-      await createMutation.mutateAsync(purchaseData);
+      const result = await createMutation.mutateAsync(purchaseData);
       resetForm();
-      return true;
+      return result;
     } catch (error: any) {
       console.error("Purchase error:", error);
       const errorMessage = error?.response?.data?.message 

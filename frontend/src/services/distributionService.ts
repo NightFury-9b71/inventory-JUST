@@ -117,7 +117,7 @@ export const usePendingDistributions = () => {
 export const useCreateDistribution = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createDistribution,
+    mutationFn: distributeItems,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['distributions'] });
       queryClient.invalidateQueries({ queryKey: ['inventory'] });

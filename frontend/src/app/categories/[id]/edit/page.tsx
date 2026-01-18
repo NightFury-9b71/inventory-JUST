@@ -75,15 +75,6 @@ export default function EditCategoryPage({ params }: EditCategoryPageProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isAuthenticated) {
-    return (
-      <PageLayout
-        header={<Header title="Edit Category" subtitle="Loading..." />}
-        body={<div className="flex justify-center items-center h-64">Loading...</div>}
-      />
-    );
-  }
-
   if (isLoading || !category) {
     return (
       <PageLayout

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useTrackByBarcode } from '@/services/trackingService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function BarcodePage() {
+function BarcodePageContent() {
   const { user } = useAuth();
   const [barcode, setBarcode] = useState('');
   const [searchBarcode, setSearchBarcode] = useState('');
@@ -180,26 +180,26 @@ export default function BarcodePage() {
                   </div>
                   <div>
                     <p className="font-semibold">Total Cost:</p>
-                    <p>৳{data.purchaseInformation.totalCost}</p>
+                    <p>৳{data.purchaseInformation?.totalCost}</p>
                   </div>
                   <div>
                     <p className="font-semibold">Supplier:</p>
-                    <p>{data.purchaseInformation.supplier || 'N/A'}</p>
+                    <p>{data.purchaseInformation?.supplier || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="font-semibold">Purchased By:</p>
-                    <p className="text-blue-600 hover:underline cursor-pointer" onClick={() => router.push(`/profile/${data.purchaseInformation.purchasedById}`)}>{data.purchaseInformation.purchasedBy} ({data.purchaseInformation.purchasedByUsername})</p>
+                    <p className="text-blue-600 hover:underline cursor-pointer" onClick={() => data.purchaseInformation?.purchasedById && router.push(`/profile/${data.purchaseInformation.purchasedById}`)}>{data.purchaseInformation?.purchasedBy} ({data.purchaseInformation?.purchasedByUsername})</p>
                   </div>
                   <div>
                     <p className="font-semibold">Purchased For Office:</p>
-                    <p className="text-blue-600 hover:underline cursor-pointer" onClick={() => router.push(`/offices/${data.purchaseInformation.purchasedForOfficeId}`)}>{data.purchaseInformation.purchasedForOffice}</p>
+                    <p className="text-blue-600 hover:underline cursor-pointer" onClick={() => data.purchaseInformation?.purchasedForOfficeId && router.push(`/offices/${data.purchaseInformation.purchasedForOfficeId}`)}>{data.purchaseInformation?.purchasedForOffice}</p>
                   </div>
                   <div>
                     <p className="font-semibold">Purchase Date:</p>
-                    <p>{new Date(data.purchaseInformation.purchaseDate).toLocaleString()}</p>
+                    <p>{data.purchaseInformation?.purchaseDate && new Date(data.purchaseInformation.purchaseDate).toLocaleString()}</p>
                   </div>
                 </div>
-                {data.purchaseInformation.remarks && (
+                {data.purchaseInformation?.remarks && (
                   <div className="mt-4">
                     <p className="font-semibold">Remarks:</p>
                     <p>{data.purchaseInformation.remarks}</p>
@@ -313,5 +313,13 @@ export default function BarcodePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function BarcodePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-6"><p>Loading...</p></div>}>
+      <BarcodePageContent />
+    </Suspense>
   );
 }

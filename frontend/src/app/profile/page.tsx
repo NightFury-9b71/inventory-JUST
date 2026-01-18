@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout, Header } from "@/components/page";
@@ -13,7 +13,7 @@ import { ChangePasswordDialog } from "./components/ChangePasswordDialog";
 import { useUser } from "@/services/userService";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { user: currentUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -59,7 +59,7 @@ export default function ProfilePage() {
     <PageLayout
       header={
         <Header 
-          title={isOwnProfile ? "My Profile" : `${user?.fullName || user?.name || user?.username}'s Profile`}
+          title={isOwnProfile ? "My Profile" : `${user?.name || user?.username}'s Profile`}
           subtitle={isMobile ? "" : (isOwnProfile ? "Manage your account information" : "View user information")}
         />
       }
@@ -71,12 +71,12 @@ export default function ProfilePage() {
               <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center justify-between'}`}>
                 <div className="flex items-center space-x-4">
                   <div className={`${isMobile ? 'h-14 w-14 text-xl' : 'h-16 w-16 text-2xl'} rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold`}>
-                    {(user.fullName || user.name)?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || 
-                     user.username?.slice(0, 2).toUpperCase()}
+                    {user?.name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || 
+                     user?.username?.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <CardTitle className={isMobile ? 'text-xl' : 'text-2xl'}>{user.fullName || user.name || user.username}</CardTitle>
-                    <CardDescription className={isMobile ? 'text-xs' : ''}>@{user.username}</CardDescription>
+                    <CardTitle className={isMobile ? 'text-xl' : 'text-2xl'}>{user?.name || user?.username}</CardTitle>
+                    <CardDescription className={isMobile ? 'text-xs' : ''}>@{user?.username}</CardDescription>
                   </div>
                 </div>
                 {isOwnProfile && (
@@ -96,7 +96,7 @@ export default function ProfilePage() {
                     <Mail className="h-4 w-4 mr-2" />
                     Email Address
                   </div>
-                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium break-all`}>{user.email || "Not provided"}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium break-all`}>{user?.email || "Not provided"}</p>
                 </div>
 
                 {/* Office */}
@@ -105,7 +105,7 @@ export default function ProfilePage() {
                     <Building2 className="h-4 w-4 mr-2" />
                     Office
                   </div>
-                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>{user.officeName || "Not assigned"}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>{(user as any)?.office?.name || (user as any)?.officeName || "Not assigned"}</p>
                 </div>
 
                 {/* Role */}
@@ -115,8 +115,8 @@ export default function ProfilePage() {
                     Role
                   </div>
                   <div>
-                    <Badge variant={user.role === "ADMIN" ? "default" : "secondary"} className={isMobile ? 'text-xs' : ''}>
-                      {user.role}
+                    <Badge variant={typeof user?.role === 'string' ? (user?.role === "ADMIN" ? "default" : "secondary") : "secondary"} className={isMobile ? 'text-xs' : ''}>
+                      {typeof user?.role === 'string' ? user?.role : user?.role?.name || 'Unknown'}
                     </Badge>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export default function ProfilePage() {
                     <User className="h-4 w-4 mr-2" />
                     User ID
                   </div>
-                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>#{user.id}</p>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>#{user?.id}</p>
                 </div>
               </div>
             </CardContent>
@@ -169,17 +169,17 @@ export default function ProfilePage() {
               <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
                 <div className="flex justify-between items-center">
                   <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Username</span>
-                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{user.username}</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{user?.username}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Office ID</span>
-                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{user.officeId || "N/A"}</span>
+                  <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>{(user as any)?.office?.id || (user as any)?.officeId || "N/A"}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>Account Type</span>
-                  <Badge variant="outline" className={isMobile ? 'text-xs' : ''}>{user.role}</Badge>
+                  <Badge variant="outline" className={isMobile ? 'text-xs' : ''}>{typeof user?.role === 'string' ? user?.role : user?.role?.name || 'Unknown'}</Badge>
                 </div>
               </div>
             </CardContent>
@@ -187,5 +187,13 @@ export default function ProfilePage() {
         </div>
       }
     />
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-6"><p>Loading...</p></div>}>
+      <ProfilePageContent />
+    </Suspense>
   );
 }

@@ -100,15 +100,6 @@ export default function EditOfficePage({ params }: EditOfficePageProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  if (!isAuthenticated) {
-    return (
-      <PageLayout
-        header={<Header title="Edit Office" subtitle="Loading..." />}
-        body={<div className="flex justify-center items-center h-64">Loading...</div>}
-      />
-    );
-  }
-
   if (isLoading || !office) {
     return (
       <PageLayout
